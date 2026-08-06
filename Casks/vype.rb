@@ -4,7 +4,7 @@
 # the next release overwrites this file.
 cask "vype" do
   version "1.1.1"
-  sha256 "0b2ac1a1a7b8204b8e9ffe374406d1f5b678b96b71b0be940621a29795db6f49"
+  sha256 "4042a8d8e3b6daed44dcd639a3fe1b189d28b1434bb3077dd16f116ca017e19c"
 
   url "https://github.com/qzmfranklin/homebrew-tap/releases/download/vype-1.1.1/Vype-macos.zip"
   name "Vype"

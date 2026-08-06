@@ -10,6 +10,12 @@ Homebrew tap.
 brew install qzmfranklin/tap/iap
 ```
 
+### oyyama
+
+```sh
+brew install qzmfranklin/tap/oyyama
+```
+
 ## Casks
 
 ### courier

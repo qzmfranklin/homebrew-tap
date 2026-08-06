@@ -5,23 +5,23 @@
 class Iap < Formula
   desc "Identity-aware proxy CLI: dev pods, SSH, git, and model access"
   homepage "https://github.com/qzmfranklin/homebrew-tap"
-  version "v1-20260806-094542"
+  version "v1-20260806-101557"
   license :cannot_represent
 
   on_macos do
     # One universal (arm64 + x86_64) binary, matching what is published.
-    url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-094542/iap-darwin-universal.tar.xz"
-    sha256 "864ca52aec90e1ade1e2d6e07335e382609669dbdfafa0bce6d5915a4cd3def0"
+    url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-101557/iap-darwin-universal.tar.xz"
+    sha256 "cfef29adaf89319e78e2fe042e0aa4700d1e8a11bcdf16666908e8e82e2a1dd9"
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-094542/iap-linux-amd64.tar.xz"
-      sha256 "63f5669a4fbf05d0c7dcffeb641d92f1e588d3d622f4243cbc0bce262ae3c740"
+      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-101557/iap-linux-amd64.tar.xz"
+      sha256 "18264866ad503374cb989867339e162004b7617791bb56b50698b3b42b3f5181"
     end
     on_arm do
-      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-094542/iap-linux-arm64.tar.xz"
-      sha256 "e421d2eaf4e44538d60b67c16aa56e7639e81e7bad5a0cb66e259398c4911c0b"
+      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-101557/iap-linux-arm64.tar.xz"
+      sha256 "aade4604c22c25bbf91cad7a628b3c252606dea49441de047114197240b983f9"
     end
   end
 
