@@ -45,7 +45,22 @@ class Iap < Formula
     foreign = HOMEBREW_PREFIX/"bin/iap"
     if foreign.exist? && !foreign.symlink?
       opoo "Removing #{foreign} (from the shell installer) so Homebrew can link its own."
-      foreign.unlink
+      begin
+        # chmod first: the installed binary is mode 0555, and unlink on a
+        # read-only file raises EPERM even when we own it.
+        foreign.chmod 0644
+        foreign.unlink
+      rescue Errno::EPERM, Errno::EACCES
+        # Root-owned (an older sudo install). We cannot remove it unprivileged,
+        # and aborting would leave the user with no working install at all, so
+        # continue and tell them exactly what to run.
+        opoo <<~WARNING
+          Could not remove #{foreign} (permission denied).
+          It will shadow this Homebrew install. Remove it with:
+              sudo rm #{foreign}
+          then run: brew link iap
+        WARNING
+      end
     end
 
     # A root-owned /usr/local/bin/iap cannot be removed from here (the formula
