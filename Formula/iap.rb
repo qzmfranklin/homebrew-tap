@@ -45,7 +45,7 @@ class Iap < Formula
       opoo <<~WARNING
         Another iap exists at #{other} and will shadow this Homebrew install.
         Remove it, then re-link:
-            #{other.writable? ? "" : "sudo "}rm #{other}
+            #{other.dirname.writable? ? "" : "sudo "}rm #{other}
             brew link iap
       WARNING
     end
