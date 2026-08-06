@@ -42,10 +42,14 @@ class Iap < Formula
       # A symlink under our own prefix is Homebrew's own link, not a stray copy.
       next if other.symlink? && other.to_s.start_with?("#{HOMEBREW_PREFIX}/")
 
+      # No writability test: inside the sandbox every path reports unwritable,
+      # so a conditional `sudo` prefix would be wrong more often than right.
+      # `rm` alone is correct for the common (user-owned Homebrew) case, and
+      # the shell reports plainly if elevation is needed.
       opoo <<~WARNING
         Another iap exists at #{other} and will shadow this Homebrew install.
         Remove it, then re-link:
-            #{other.dirname.writable? ? "" : "sudo "}rm #{other}
+            rm #{other}      # prefix with sudo if it is root-owned
             brew link iap
       WARNING
     end
