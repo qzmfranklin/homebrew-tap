@@ -14,5 +14,4 @@ brew install qzmfranklin/tap/iap
 brew update && brew upgrade iap
 ```
 
-Formulae here are generated and overwritten on every release; do not edit them
-by hand.
+Formulae here are generated and overwritten on every release; do not edit them by hand.
