@@ -27,56 +27,26 @@ class Iap < Formula
   end
 
   def install
-    # Clear a foreign `iap` out of Homebrew's bin BEFORE the keg is linked.
+    # Warn about any other `iap` that will shadow this keg.
     #
-    # The shell installer drops a real file at <prefix>/bin/iap. Homebrew
-    # refuses to link over anything it does not own, so that file silently
-    # wins: the keg installs, `brew link` fails, and `iap version` keeps
-    # reporting the old build. Removing it makes `brew install` authoritative,
-    # which is the stated policy -- Homebrew beats the script.
+    # The formula CANNOT delete these: `install` runs inside Homebrew's sandbox,
+    # which permits writes only under the Cellar, so unlinking <prefix>/bin/iap
+    # fails with EPERM regardless of file ownership. (`post_install` is no help
+    # either -- FormulaInstaller#finish calls link(keg) BEFORE it, so the link
+    # has already failed by then; and `pre_install` is not a hook at all.)
     #
-    # This must happen in `install`, not `post_install`: FormulaInstaller#finish
-    # calls link(keg) BEFORE post_install, so by then the link has already
-    # failed. (`pre_install` is not a Homebrew hook at all -- defining one is
-    # silently ignored.)
-    #
-    # Only a NON-symlink is removed. Homebrew's own links are symlinks into the
-    # Cellar, so this cannot delete a link brew placed.
-    foreign = HOMEBREW_PREFIX/"bin/iap"
-    if foreign.exist? && !foreign.symlink?
-      opoo "Removing #{foreign} (from the shell installer) so Homebrew can link its own."
-      begin
-        # chmod first: the installed binary is mode 0555, and unlink on a
-        # read-only file raises EPERM even when we own it.
-        foreign.chmod 0644
-        foreign.unlink
-      rescue Errno::EPERM, Errno::EACCES
-        # Root-owned (an older sudo install). We cannot remove it unprivileged,
-        # and aborting would leave the user with no working install at all, so
-        # continue and tell them exactly what to run.
-        opoo <<~WARNING
-          Could not remove #{foreign} (permission denied).
-          It will shadow this Homebrew install. Remove it with:
-              sudo rm #{foreign}
-          then run: brew link iap
-        WARNING
-      end
-    end
+    # So the honest thing is to name the file and the exact command. The shell
+    # installer removes it automatically, since it runs unsandboxed.
+    [HOMEBREW_PREFIX/"bin/iap", Pathname.new("/usr/local/bin/iap")].uniq.each do |other|
+      next unless other.exist?
+      # A symlink under our own prefix is Homebrew's own link, not a stray copy.
+      next if other.symlink? && other.to_s.start_with?("#{HOMEBREW_PREFIX}/")
 
-    # A root-owned /usr/local/bin/iap cannot be removed from here (the formula
-    # runs unprivileged, by design). Warn instead: whichever directory comes
-    # first on PATH wins, so a leftover copy there silently shadows this keg and
-    # the user sees an old version with no indication why.
-    # Compared by prefix, not by realpath: bin/"iap" does not exist yet at this
-    # point, and on Intel Homebrew the prefix IS /usr/local, where that path is
-    # our own link rather than a stray copy.
-    legacy = Pathname.new("/usr/local/bin/iap")
-    if legacy.exist? && !legacy.to_s.start_with?("#{HOMEBREW_PREFIX}/")
       opoo <<~WARNING
-        Another iap exists at #{legacy}.
-        If it appears earlier in your PATH it will shadow this Homebrew install.
-        Remove it with:
-            sudo rm #{legacy}
+        Another iap exists at #{other} and will shadow this Homebrew install.
+        Remove it, then re-link:
+            #{other.writable? ? "" : "sudo "}rm #{other}
+            brew link iap
       WARNING
     end
 
