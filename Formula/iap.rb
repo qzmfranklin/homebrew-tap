@@ -26,16 +26,24 @@ class Iap < Formula
   end
 
   def install
-    # Warn about a stray /usr/local/bin/iap. This one CANNOT be removed from # here:
-    it is outside HOMEBREW_PREFIX on Apple Silicon (where the prefix is #
-    /opt/homebrew), so no Homebrew sandbox ever grants write access to it, and # it
-    is typically root-owned besides. Naming the exact command is the most # the
-    formula can honestly do. # # Skipped when it IS our own prefix (Intel Homebrew
-    installs at /usr/local), # where that path is the keg link rather than a stray
-    copy. legacy = Pathname.new("/usr/local/bin/iap") if legacy.exist? &&
-    !legacy.to_s.start_with?("#{HOMEBREW_PREFIX}/") opoo <<~WARNING Another iap
-    exists at #{legacy} and may shadow this Homebrew install if it comes first on
-    your PATH. Remove it with: sudo rm #{legacy} WARNING end bin.install "iap"
+    # Warn about a stray /usr/local/bin/iap. This one CANNOT be removed from
+    # here: it is outside HOMEBREW_PREFIX on Apple Silicon (where the prefix is
+    # /opt/homebrew), so no Homebrew sandbox ever grants write access to it, and
+    # it is typically root-owned besides. Naming the exact command is the most
+    # the formula can honestly do.
+    #
+    # Skipped when it IS our own prefix (Intel Homebrew installs at /usr/local),
+    # where that path is the keg link rather than a stray copy.
+    legacy = Pathname.new("/usr/local/bin/iap")
+    if legacy.exist? && !legacy.to_s.start_with?("#{HOMEBREW_PREFIX}/")
+      opoo <<~WARNING
+        Another iap exists at #{legacy} and may shadow this Homebrew install
+        if it comes first on your PATH. Remove it with:
+            sudo rm #{legacy}
+      WARNING
+    end
+
+    bin.install "iap"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
@@ -57,41 +65,47 @@ class Iap < Formula
   end
 
   def post_install
-    # Remove a foreign `iap` from Homebrew's bin and take over the link. # # The
-    shell installer drops a REAL FILE at
-    <prefix
-        >/bin/iap. Homebrew refuses to # link over anything it does not own, so
-        without this the keg installs, `brew # link` fails, and `iap version` keeps
-        reporting the installer's old build. # Homebrew is the authority when both
-        are present, so the foreign file loses. # # This must live in
-        `post_install`, not `install`: # - The `install` sandbox grants writes only
-        under the Cellar # (allow_write_cellar), so unlinking
-        <prefix
-            >/bin/iap there fails with EPERM. # - The `post_install` sandbox
-            additionally grants every keg link directory # (bin, etc, include, lib,
-            sbin, share, var) under HOMEBREW_PREFIX, so the # write is permitted
-            here. # - `pre_install` is not a Homebrew hook at all; defining one is
-            ignored. # # link(keg) has ALREADY run by this point
-            (FormulaInstaller#finish links before # calling post_install), so it
-            will have failed against the foreign file. That # is why this re-links
-            explicitly afterwards rather than just deleting. # # Only a NON-symlink
-            is removed: Homebrew's own links are symlinks into the # Cellar, so this
-            can never delete a link brew itself placed. foreign =
-            HOMEBREW_PREFIX/"bin/iap" if foreign.exist? && !foreign.symlink? opoo
-            "Removing #{foreign} left by the shell installer so Homebrew can link
-            its own." foreign.unlink # Re-link now that the obstruction is gone; the
-            earlier link(keg) failed. # # Guarded: Keg#link raises
-            AlreadyLinkedError when the linked-keg record # already exists, which
-            happens if the earlier link got far enough to record # itself before
-            hitting the foreign file. An unhandled raise here would abort # an
-            otherwise successful install, so treat "already linked" as success and #
-            only warn on a genuine failure. begin keg = Keg.new(prefix)
-            keg.link(verbose: false) unless keg.linked? rescue
-            Keg::AlreadyLinkedError # Nothing to do -- the keg is already linked.
-            rescue Keg::LinkError => e opoo "Could not link iap automatically
-            (#{e.message}). Run: brew link iap" end end
-        </prefix></prefix
-    >
+    # Remove a foreign `iap` from Homebrew's bin and take over the link.
+    #
+    # The shell installer drops a REAL FILE at <prefix>/bin/iap. Homebrew refuses to
+    # link over anything it does not own, so without this the keg installs, `brew
+    # link` fails, and `iap version` keeps reporting the installer's old build.
+    # Homebrew is the authority when both are present, so the foreign file loses.
+    #
+    # This must live in `post_install`, not `install`:
+    #   - The `install` sandbox grants writes only under the Cellar
+    #     (allow_write_cellar), so unlinking <prefix>/bin/iap there fails with EPERM.
+    #   - The `post_install` sandbox additionally grants every keg link directory
+    #     (bin, etc, include, lib, sbin, share, var) under HOMEBREW_PREFIX, so the
+    #     write is permitted here.
+    #   - `pre_install` is not a Homebrew hook at all; defining one is ignored.
+    #
+    # link(keg) has ALREADY run by this point (FormulaInstaller#finish links before
+    # calling post_install), so it will have failed against the foreign file. That
+    # is why this re-links explicitly afterwards rather than just deleting.
+    #
+    # Only a NON-symlink is removed: Homebrew's own links are symlinks into the
+    # Cellar, so this can never delete a link brew itself placed.
+    foreign = HOMEBREW_PREFIX/"bin/iap"
+    if foreign.exist? && !foreign.symlink?
+      opoo "Removing #{foreign} left by the shell installer so Homebrew can link its own."
+      foreign.unlink
+      # Re-link now that the obstruction is gone; the earlier link(keg) failed.
+      #
+      # Guarded: Keg#link raises AlreadyLinkedError when the linked-keg record
+      # already exists, which happens if the earlier link got far enough to record
+      # itself before hitting the foreign file. An unhandled raise here would abort
+      # an otherwise successful install, so treat "already linked" as success and
+      # only warn on a genuine failure.
+      begin
+        keg = Keg.new(prefix)
+        keg.link(verbose: false) unless keg.linked?
+      rescue Keg::AlreadyLinkedError
+        # Nothing to do -- the keg is already linked.
+      rescue Keg::LinkError => e
+        opoo "Could not link iap automatically (#{e.message}). Run: brew link iap"
+      end
+    end
   end
 
   def caveats

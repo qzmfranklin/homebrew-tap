@@ -11,7 +11,7 @@ class Oyyama < Formula
   on_macos do
     # One universal (arm64 + x86_64) binary, matching what is published.
     url "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-v1-20260806-193000/oyyama-darwin-universal.tar.xz"
-    sha256 "d343c071e34475553b809a2763ac32ba2fd9d15c9e980d4bd03745f406ed3aaa"
+    sha256 "7c335e8808c6c29c238b2a76db9aa30072a5ae24704830ddf6842041fc4babd2"
   end
 
   on_linux do
