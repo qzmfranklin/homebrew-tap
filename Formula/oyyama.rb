@@ -5,25 +5,25 @@
 class Oyyama < Formula
   desc "Large language model runner, interoperable with ollama"
   homepage "https://github.com/qzmfranklin/homebrew-tap"
-  version "v1-20260806-193000"
+  # Platform choice lives in the argument, not in an on_macos block:
+  # brew does not allow `url`/`sha256` inside an on_system block.
+  # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
+  url on_system_conditional(
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1-20260807-184202/oyyama-darwin-universal.tar.xz",
+    linux: on_arch_conditional(
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1-20260807-184202/oyyama-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1-20260807-184202/oyyama-linux-amd64.tar.xz",
+    ),
+  )
+  version "1-20260807-184202"
+  sha256 on_system_conditional(
+    macos: "41fb6f8b80a31ed614571e9acc706490d35f6ac469fd8e26d57e293821d852e1",
+    linux: on_arch_conditional(
+      arm:   "c3d3d9031203d5646dbba492af8b731e75ef2ce66c3e0b323fbf763ab790e030",
+      intel: "0d8eb55198ddb2845339ec6112f86eb48769f6e39e69915a1cca1d952f0351bd",
+    ),
+  )
   license :cannot_represent
-
-  on_macos do
-    # One universal (arm64 + x86_64) binary, matching what is published.
-    url "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-v1-20260806-193000/oyyama-darwin-universal.tar.xz"
-    sha256 "7c335e8808c6c29c238b2a76db9aa30072a5ae24704830ddf6842041fc4babd2"
-  end
-
-  on_linux do
-    on_intel do
-      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-v1-20260806-193000/oyyama-linux-amd64.tar.xz"
-      sha256 "56156d5e2b79dd9e98660536c948d2eb2fd0db2c9058c95f5b7dcc53ad779e9a"
-    end
-    on_arm do
-      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-v1-20260806-193000/oyyama-linux-arm64.tar.xz"
-      sha256 "ed66b80357db887e6559aff236ea5577a6b0ef986b69f65fb2ced2af3a4559f9"
-    end
-  end
 
   def install
     bin.install "oyyama"

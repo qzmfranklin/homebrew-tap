@@ -5,25 +5,25 @@
 class Iap < Formula
   desc "Identity-aware proxy CLI: dev pods, SSH, git, and model access"
   homepage "https://github.com/qzmfranklin/homebrew-tap"
-  version "v1-20260806-124654"
+  # Platform choice lives in the argument, not in an on_macos block:
+  # brew does not allow `url`/`sha256` inside an on_system block.
+  # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
+  url on_system_conditional(
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-1-20260807-184202/iap-darwin-universal.tar.xz",
+    linux: on_arch_conditional(
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-1-20260807-184202/iap-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-1-20260807-184202/iap-linux-amd64.tar.xz",
+    ),
+  )
+  version "1-20260807-184202"
+  sha256 on_system_conditional(
+    macos: "cf0e7e4263721dea0c87163c3198d85035d65dde6557afe870814b72a7ee81c0",
+    linux: on_arch_conditional(
+      arm:   "362735f6076cef7833e6313d27be5539b1c5e39403248ca16551466c4b1f5e2a",
+      intel: "05a3ca77d50d8770a3a0b773cf7c353601f2ca5b53a2e5d97ae92a545e3b78b1",
+    ),
+  )
   license :cannot_represent
-
-  on_macos do
-    # One universal (arm64 + x86_64) binary, matching what is published.
-    url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-124654/iap-darwin-universal.tar.xz"
-    sha256 "1cee442b48437c8f2d69be2c2d60496e06dc370e6c224c97c8e4e00a88566320"
-  end
-
-  on_linux do
-    on_intel do
-      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-124654/iap-linux-amd64.tar.xz"
-      sha256 "6006d46e53e46dc4da7b8dffaf9c0caa39c69fb9a83ac1d5f21aa8cc22a43efa"
-    end
-    on_arm do
-      url "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-v1-20260806-124654/iap-linux-arm64.tar.xz"
-      sha256 "15475d20ac4686e3e8772d8c57ac635d9e955dbacf1abacf547988985cd04c66"
-    end
-  end
 
   def install
     # Warn about a stray /usr/local/bin/iap. This one CANNOT be removed from
@@ -58,10 +58,19 @@ class Iap < Formula
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"iap"
     end
 
-    # `--print SHELL` writes the script to STDOUT and installs nothing; the bare
-    # `iap complete` would edit the user's rc file, which a formula must not do.
-    (bash_completion/"iap").write Utils.safe_popen_read(bin/"iap", "complete", "--print", "bash")
-    (zsh_completion/"_iap").write Utils.safe_popen_read(bin/"iap", "complete", "--print", "zsh")
+    # `--print SHELL` writes the script to STDOUT and installs nothing; a
+    # bare `iap complete` would edit the user's rc file, which a
+    # formula must not do.
+    #
+    # generate_completions_from_executable appends the shell name as the
+    # final argument and writes each script where brew expects it, so it
+    # replaces one hand-rolled safe_popen_read per shell.
+    generate_completions_from_executable(
+      bin/"iap",
+      "complete",
+      "--print",
+      shells: [:bash, :zsh],
+    )
   end
 
   def post_install
