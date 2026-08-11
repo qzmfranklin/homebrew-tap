@@ -4,7 +4,7 @@
 # the next release overwrites this file.
 cask "courier" do
   version "0.1.3"
-  sha256 "cd72654f0469bf181496ae6c62ddb6eaded3fa1ac93e7ea71fe80f98dbe81971"
+  sha256 "90ec68f68b2daf9a51f32329e4ae3a1afdded18c59099192e6c76b205deccbd0"
 
   url "https://github.com/qzmfranklin/homebrew-tap/releases/download/courier-0.1.3/Courier-macos.tar.xz"
   name "Courier"

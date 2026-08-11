@@ -17,10 +17,10 @@ class Oyyama < Formula
   )
   version "1-20260807-184202"
   sha256 on_system_conditional(
-    macos: "41fb6f8b80a31ed614571e9acc706490d35f6ac469fd8e26d57e293821d852e1",
+    macos: "093cc226cde55423769f4e5114d7e4d59ab9330851f3c202d1a781989710f93e",
     linux: on_arch_conditional(
-      arm:   "c3d3d9031203d5646dbba492af8b731e75ef2ce66c3e0b323fbf763ab790e030",
-      intel: "0d8eb55198ddb2845339ec6112f86eb48769f6e39e69915a1cca1d952f0351bd",
+      arm:   "fd656b15e6b65dfa8bbd6cda205334839eee7ffaf748c114d5e5bafd2be99cb2",
+      intel: "ad054a679d15778f7130558ef311975d544e078c951ddd0bd45042046ef068c6",
     ),
   )
   license :cannot_represent
