@@ -15,12 +15,12 @@ class Iap < Formula
       intel: "https://corp.modelbest.cn/download/linux/amd64.xz",
     ),
   )
-  version "2.0.0"
+  version "2.2.0"
   sha256 on_system_conditional(
-    macos: "7cad0b2cb1776abab39e3a10e9b2d935545e62eddf9d207e8ced3dc391ace36a",
+    macos: "a9fdec4e12e29461a664a132b2f73208e4ca0bd304b2c6ba1b7addcfb89e8521",
     linux: on_arch_conditional(
-      arm:   "d1a54199176c01e32dca65c708514433085b9e18dd06e5e03bd79c829681a5d5",
-      intel: "2784a703a32a024d01126badb1e4df436332e0689bb1a1f3cd7e9b2924c865b3",
+      arm:   "e6cfa8c75a16e622c1baa3773df1a0ee09717554e787ca1a505a72a349f05a04",
+      intel: "c375926f978ef68ba309480f2ba619c877285fcca119634f5b6d194718c31bef",
     ),
   )
   license :cannot_represent
