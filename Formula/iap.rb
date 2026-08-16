@@ -17,10 +17,10 @@ class Iap < Formula
   )
   version "2.0.0"
   sha256 on_system_conditional(
-    macos: "6b896effb41cd3d61b51a16efdcc35ad4d2c688f1872efc058e5904f76f85696",
+    macos: "7cad0b2cb1776abab39e3a10e9b2d935545e62eddf9d207e8ced3dc391ace36a",
     linux: on_arch_conditional(
-      arm:   "645c713a7b05585d4dd04a08840f4a9b013da54627095c2b7f4185a4a720c868",
-      intel: "69121558e0ae4cc1bbfb6413baf2b78e2d21b337a0fcdf9c6ee91b7da3c44749",
+      arm:   "d1a54199176c01e32dca65c708514433085b9e18dd06e5e03bd79c829681a5d5",
+      intel: "2784a703a32a024d01126badb1e4df436332e0689bb1a1f3cd7e9b2924c865b3",
     ),
   )
   license :cannot_represent
