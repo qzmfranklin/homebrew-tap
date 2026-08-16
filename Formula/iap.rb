@@ -132,6 +132,19 @@ class Iap < Formula
     # time), and those are version-managed with the keg. The rc snippet is therefore
     # not just stale but redundant.
     #
+    # NOT `Dir.home`, and this is the whole reason an earlier version of this hook
+    # silently did nothing: Homebrew resets HOME to a sandbox scratch directory for
+    # formula stages, so `Dir.home` resolved there, `rc.file?` was false, and every
+    # iteration fell through `next` -- the hook succeeded loudly while touching
+    # nothing. `Dir.home(ENV["USER"])` reads the invoking user's home from the
+    # password database instead, which is how Homebrew's own sandbox.rb locates it.
+    real_home = begin
+      user = ENV.fetch("USER", nil)
+      user ? Pathname.new(Dir.home(user)) : Pathname.new(Dir.home)
+    rescue ArgumentError
+      Pathname.new(Dir.home)
+    end
+
     # Only the guarded block is touched -- the exact markers `iap complete` writes,
     # matched after stripping whitespace, mirroring its own remove_existing_block.
     # Everything outside the guards is preserved byte for byte, and a file without
@@ -141,7 +154,7 @@ class Iap < Formula
     guard_end = "# iap inclusion guard ends"
 
     [".zshrc", ".bashrc"].each do |rc_name|
-      rc = Pathname.new(Dir.home)/rc_name
+      rc = real_home/rc_name
       next unless rc.file?
 
       lines = rc.read.split("\n", -1)
@@ -167,7 +180,7 @@ class Iap < Formula
       opoo "Could not clean the iap completion block from ~/#{rc_name} (#{e.message})."
     end
 
-    stale_completions = Pathname.new(Dir.home)/".cache/iap/complete"
+    stale_completions = real_home/".cache/iap/complete"
     if stale_completions.directory?
       begin
         stale_completions.rmtree
