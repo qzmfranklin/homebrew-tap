@@ -18,6 +18,12 @@ brew install qzmfranklin/tap/oyyama
 
 ## Casks
 
+### courier
+
+```sh
+brew install --cask qzmfranklin/tap/courier
+```
+
 ### vype
 
 ```sh
