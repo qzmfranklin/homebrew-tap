@@ -13,12 +13,10 @@ cask "courier" do
 
   app "Courier Desktop.app"
 
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-cr", "#{appdir}/Courier Desktop.app"],
-                   sudo: false
-    system_command "/usr/bin/codesign",
-                   args: ["--force", "--sign", "-", "#{appdir}/Courier Desktop.app"],
-                   sudo: false
+  postflight_steps do
+    run "/usr/bin/xattr",
+        args: ["-cr", "{{appdir}}/Courier Desktop.app"]
+    run "/usr/bin/codesign",
+        args: ["--force", "--sign", "-", "{{appdir}}/Courier Desktop.app"]
   end
 end

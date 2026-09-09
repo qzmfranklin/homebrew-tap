@@ -13,12 +13,10 @@ cask "vype" do
 
   app "Vype.app"
 
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-cr", "#{appdir}/Vype.app"],
-                   sudo: false
-    system_command "/usr/bin/codesign",
-                   args: ["--force", "--sign", "-", "#{appdir}/Vype.app"],
-                   sudo: false
+  postflight_steps do
+    run "/usr/bin/xattr",
+        args: ["-cr", "{{appdir}}/Vype.app"]
+    run "/usr/bin/codesign",
+        args: ["--force", "--sign", "-", "{{appdir}}/Vype.app"]
   end
 end
