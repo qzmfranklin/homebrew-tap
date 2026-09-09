@@ -9,18 +9,18 @@ class Iap < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-3.11.0/darwin.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-3.12.0/darwin.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-3.11.0/linux/arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-3.11.0/linux/amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-3.12.0/linux/arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-3.12.0/linux/amd64.xz",
     ),
   )
-  version "3.11.0"
+  version "3.12.0"
   sha256 on_system_conditional(
-    macos: "66a1d00fac696bdc1c34025397f9d430332da9f59ad0631c73733429475cb4c3",
+    macos: "9e693181a38f39d06358858ac3290777337ba2d7bca43b428ad4fbcf71d4738f",
     linux: on_arch_conditional(
-      arm:   "0a8942cfeda44995c66e2ead41e874c3c57bb6d4407e0a51941fd95503b17ddb",
-      intel: "c60ba28f54b833bad49b65fa424cfcf420cd12dd3761f2d0eb3eed8168ae7a85",
+      arm:   "34040ba680edb33e8540b427d395c65b6481f4b9b393ac2eaf6a0562a0d68cb3",
+      intel: "236fb297f1d45eb2879995c964169bcc640f33ce2f3268dfc9a527865f311f5f",
     ),
   )
   license :cannot_represent
@@ -74,6 +74,21 @@ class Iap < Formula
   end
 
   def post_install
+    linked = HOMEBREW_PREFIX/"bin/iap"
+    if linked.exist? && !linked.symlink?
+      opoo <<~EOS
+        Replacing a non-Homebrew iap at #{linked}.
+        That file was almost certainly left by the legacy install script.
+        The Homebrew-managed iap is now the one on your PATH.
+      EOS
+      linked.unlink
+    end
+
+    # Idempotent, and also repairs the case where the legacy binary was
+    # deleted by hand: brew never created the symlink, so the tool was
+    # missing from PATH entirely.
+    linked.make_relative_symlink(bin/"iap") unless linked.symlink?
+
     # Remove a foreign `iap` from Homebrew's bin and take over the link.
     #
     # The shell installer drops a REAL FILE at <prefix>/bin/iap. Homebrew refuses to
@@ -116,6 +131,7 @@ class Iap < Formula
       end
     end
   end
+
 
   def caveats
     <<~EOS
