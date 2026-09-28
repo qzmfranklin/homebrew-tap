@@ -17,10 +17,10 @@ class Oyyama < Formula
   )
   version "1-20260807-184202"
   sha256 on_system_conditional(
-    macos: "093cc226cde55423769f4e5114d7e4d59ab9330851f3c202d1a781989710f93e",
+    macos: "e009cfd21e2eb3c426de5204b62bc908918fa74f0e2be0a5c12772c48b68d15c",
     linux: on_arch_conditional(
-      arm:   "fd656b15e6b65dfa8bbd6cda205334839eee7ffaf748c114d5e5bafd2be99cb2",
-      intel: "ad054a679d15778f7130558ef311975d544e078c951ddd0bd45042046ef068c6",
+      arm:   "4a6c0c724a12cf64dd9ea3be86e3eb077a0ccbcb192ec125d13d25861c3651f6",
+      intel: "382230e1ab37c2175359d1e3c7f8ba60088e32604dc5c6a594854e628832ef6c",
     ),
   )
   license :cannot_represent
@@ -41,6 +41,24 @@ class Oyyama < Formula
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"oyyama"
     end
   end
+
+  def post_install
+    linked = HOMEBREW_PREFIX/"bin/oyyama"
+    if linked.exist? && !linked.symlink?
+      opoo <<~EOS
+        Replacing a non-Homebrew oyyama at #{linked}.
+        That file was almost certainly left by the legacy install script.
+        The Homebrew-managed oyyama is now the one on your PATH.
+      EOS
+      linked.unlink
+    end
+
+    # Idempotent, and also repairs the case where the legacy binary was
+    # deleted by hand: brew never created the symlink, so the tool was
+    # missing from PATH entirely.
+    linked.make_relative_symlink(bin/"oyyama") unless linked.symlink?
+  end
+
 
   def caveats
     <<~EOS
