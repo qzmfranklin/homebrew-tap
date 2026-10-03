@@ -10,26 +10,6 @@ Homebrew tap.
 brew install qzmfranklin/tap/iap
 ```
 
-### oyyama
-
-```sh
-brew install qzmfranklin/tap/oyyama
-```
-
-## Casks
-
-### courier
-
-```sh
-brew install --cask qzmfranklin/tap/courier
-```
-
-### vype
-
-```sh
-brew install --cask qzmfranklin/tap/vype
-```
-
 ## Note on code signing
 
 Artifacts here are ad-hoc signed, not notarized. Homebrew strips the
