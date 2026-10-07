@@ -10,6 +10,8 @@ Homebrew tap.
 brew install qzmfranklin/tap/iap
 ```
 
+Identity-aware proxy CLI: dev pods, SSH, git, and model access.
+
 ## Note on code signing
 
 Artifacts here are ad-hoc signed, not notarized. Homebrew strips the
