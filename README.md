@@ -12,6 +12,17 @@ brew install qzmfranklin/tap/iap
 
 Identity-aware proxy CLI: dev pods, SSH, git, and model access.
 
+### g4
+
+```sh
+brew install qzmfranklin/tap/g4
+```
+
+Linear-trunk version control: a FUSE virtual filesystem for mounting the
+repository, plus the `git` collaboration commands (`git land`, `git sync`,
+`git fold`, `git mend`, `git view`, `git web`) usable on any plain git
+repository. `g4 mount` requires macFUSE (`brew install --cask macfuse`).
+
 ## Note on code signing
 
 Artifacts here are ad-hoc signed, not notarized. Homebrew strips the
