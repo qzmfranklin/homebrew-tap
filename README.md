@@ -21,7 +21,22 @@ brew install qzmfranklin/tap/g4
 Linear-trunk version control: a FUSE virtual filesystem for mounting the
 repository, plus the `git` collaboration commands (`git land`, `git sync`,
 `git fold`, `git mend`, `git view`, `git web`) usable on any plain git
-repository. `g4 mount` requires macFUSE (`brew install --cask macfuse`).
+repository. The git commands need NOTHING installed — no macFUSE, no
+libfuse. Only `g4 mount`'s disk flavor uses the FUSE library, loading it
+at runtime when you mount; when it is absent the mount refuses with the
+one-line remedy (`brew install --cask macfuse`) instead of crashing, and
+`g4 mount --flavor=bypass` needs no macFUSE at all.
+
+#### Ubuntu (amd64 / arm64)
+
+The same binary ships as .deb release assets — install directly:
+
+```sh
+curl -LO https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-0.1.1-linux-amd64.deb
+sudo dpkg -i g4-0.1.1-linux-amd64.deb
+```
+
+(arm64: the same lines with `g4-0.1.1-linux-arm64.deb`.)
 
 ## Note on code signing
 
