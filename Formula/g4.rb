@@ -9,18 +9,18 @@ class G4 < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.0/g4-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.0/g4-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.0/g4-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.0"
+  version "0.1.1"
   sha256 on_system_conditional(
-    macos: "b925dabc32a82f0756d0649842c527534faf80852bccba568c09b4849b42dc71",
+    macos: "70b0970b9e3495c1a0143dc8b9a51b3bb03f7158a8874a83c9e4d50e9560b663",
     linux: on_arch_conditional(
-      arm:   "1a3c269ce6d2e98ec8cf753bf33c89a0e4d8e6f87fca7f6c24637d69979844c3",
-      intel: "6ed4fded5bfe569273730b61af4b447111a51dcea8f24be5f8ddb558c12289cc",
+      arm:   "01a2ad237601f69541f25f97dc6fac039b7e46be929dc0c5e421c22816d4ccac",
+      intel: "efc37b91d0f5e78c1442748f5cc8a6096941cecfecbbaf452c01eb31ff9d7928",
     ),
   )
   license :cannot_represent
@@ -50,6 +50,20 @@ class G4 < Formula
       system "/usr/bin/xattr", "-cr", bin/"g4"
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"g4"
     end
+
+    # `--print SHELL` writes the script to STDOUT and installs nothing; a
+    # bare `g4 complete` would edit the user's rc file, which a
+    # formula must not do.
+    #
+    # generate_completions_from_executable appends the shell name as the
+    # final argument and writes each script where brew expects it, so it
+    # replaces one hand-rolled safe_popen_read per shell.
+    generate_completions_from_executable(
+      bin/"g4",
+      "complete",
+      "--print",
+      shells: [:bash, :zsh],
+    )
   end
 
   def post_install
@@ -74,11 +88,11 @@ class G4 < Formula
     <<~EOS
       g4 ships two working surfaces at this version:
 
-        g4 mount    the FUSE virtual filesystem
+        g4 mount    the FUSE virtual filesystem (g4 umount tears it down)
         g4 git      the collaboration group: land, sync, fold, mend, view, web
 
-      Every other subcommand (umount, sync, diff, land, pick, revert, log, undo,
-      br, stat, bisect, serve) is a stub at this version.
+      Every other subcommand (sync, diff, land, pick, revert, log, undo, br, stat,
+      bisect, serve) is a stub at this version.
 
       The git group also works as plain git commands: this formula links git-land,
       git-sync, git-fold, git-mend, git-view and git-web to the g4 binary, and
@@ -86,11 +100,17 @@ class G4 < Formula
       `git sync`, `git fold`, `git mend`, `git view` and `git web` work in any
       repository with zero per-repo configuration.
 
-      `g4 mount` requires macFUSE. The formula deliberately declares no
-      depends_on: the git group never touches FUSE, and a missing macFUSE is
-      detected at runtime with the remedy:
+      The binary does not link libfuse: the mount paths load libfuse.2.dylib with
+      dlopen at execution time, so every command — `g4 git` included — runs on a
+      machine with no macFUSE installed. The formula deliberately declares no
+      depends_on (proper macFUSE use requires a reboot — far too heavy for a
+      git-only user); only the disk-flavor `g4 mount` needs the library, and when
+      libfuse is absent it refuses at runtime with the remedy:
 
         brew install --cask macfuse
+
+      The bypass flavor, `g4 mount --flavor=bypass`, is a passthrough mount that
+      needs no macFUSE at all.
 
       The published binary is ad-hoc signed, not notarized. Homebrew strips the
       quarantine attribute on install, so it runs when installed through brew; a
