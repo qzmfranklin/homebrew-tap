@@ -32,11 +32,11 @@ one-line remedy (`brew install --cask macfuse`) instead of crashing, and
 The same binary ships as .deb release assets — install directly:
 
 ```sh
-curl -LO https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-0.1.1-linux-amd64.deb
-sudo dpkg -i g4-0.1.1-linux-amd64.deb
+curl -LO https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.2/g4-0.1.2-linux-amd64.deb
+sudo dpkg -i g4-0.1.2-linux-amd64.deb
 ```
 
-(arm64: the same lines with `g4-0.1.1-linux-arm64.deb`.)
+(arm64: the same lines with `g4-0.1.2-linux-arm64.deb`.)
 
 ## Note on code signing
 
