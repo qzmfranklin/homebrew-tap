@@ -19,12 +19,12 @@ brew install qzmfranklin/tap/g4
 ```
 
 Linear-trunk version control: a FUSE virtual filesystem for mounting the
-repository, plus the `g4 git` collaboration command group (`g4 git land`,
-`g4 git sync`, `g4 git fold`, `g4 git mend`, `g4 git view`, `g4 git web`)
-usable on any plain git repository. The formula links ONE `git-g4`
-symlink, so the group is also reachable through git itself as
-`git g4 land`, `git g4 sync`, and so on — no per-repo configuration. The
-plain `git land` form is deliberately NOT installed: a `git-<cmd>`
+repository, plus the git collaboration commands `land`, `sync`, `fold`,
+`mend`, `view`, `web` — usable on any plain git repository, entered
+through GIT as `git g4 land`, `git g4 sync`, and so on. The formula
+links ONE `git-g4` symlink and that is the only surface: the group is
+deliberately absent from `g4 --help` and the completions. The plain
+`git land` form is also deliberately NOT installed: a `git-<cmd>`
 external on PATH would beat a repository's own aliases.
 
 The git commands need NOTHING installed — no macFUSE, no
