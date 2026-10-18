@@ -9,18 +9,18 @@ class G4 < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.5/g4-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.1/g4-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.5/g4-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.5/g4-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.1"
+  version "0.1.5"
   sha256 on_system_conditional(
-    macos: "70b0970b9e3495c1a0143dc8b9a51b3bb03f7158a8874a83c9e4d50e9560b663",
+    macos: "e670c0f1dde114b026f7500f03e7c0553d9725dde5d36340c17f9c1a641da607",
     linux: on_arch_conditional(
-      arm:   "01a2ad237601f69541f25f97dc6fac039b7e46be929dc0c5e421c22816d4ccac",
-      intel: "efc37b91d0f5e78c1442748f5cc8a6096941cecfecbbaf452c01eb31ff9d7928",
+      arm:   "0704a7d2be5696166c5bd8a6bd6a51e24900ba84d91d86a59de912e4b51b273b",
+      intel: "af4dde116de345361efff872e5274efd08910135047cec6ebff95f53bc5df808",
     ),
   )
   license :cannot_represent
@@ -28,15 +28,16 @@ class G4 < Formula
   def install
     bin.install "g4"
 
-    # The SIX git-* links: git's external-command mechanism runs `git-<cmd>` from
-    # PATH when `git <cmd>` matches no builtin or alias, so plain `git land` (and
-    # siblings) work with zero per-repo configuration. The g4 binary dispatches on
-    # argv[0]: a `git-<cmd>` basename is rewritten to `g4 git <cmd>` before parsing
-    # (RFD 0016 § argv[0] dispatch). The ad-hoc codesign below signs the one Mach-O
-    # every link points at, so the symlinks need no signing of their own.
-    %w[land sync fold mend view web].each do |cmd|
-      bin.install_symlink bin/"g4" => "git-#{cmd}"
-    end
+    # The ONE git-g4 link (plan 0003 row 2.34): git's external-command
+    # mechanism runs `git-g4` from PATH when `git g4` matches no builtin or
+    # alias, and the g4 binary dispatches on argv[0] — a `git-g4` basename runs
+    # the arguments through the `g4 git` group — so `git g4 land` (and siblings)
+    # work in any repository with zero per-repo configuration. The per-verb
+    # `git-<cmd>` links are RETIRED: on PATH they would BEAT a repository's own
+    # `git land` aliases (git's external-over-alias precedence), shadowing them
+    # wherever g4 is installed. The ad-hoc codesign below signs the one Mach-O
+    # the link points at, so the symlink needs no signing of its own.
+    bin.install_symlink bin/"g4" => "git-g4"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
@@ -89,16 +90,20 @@ class G4 < Formula
       g4 ships two working surfaces at this version:
 
         g4 mount    the FUSE virtual filesystem (g4 umount tears it down)
-        g4 git      the collaboration group: land, sync, fold, mend, view, web
+        git g4      the collaboration group: land, sync, fold, mend, view, web
 
       Every other subcommand (sync, diff, land, pick, revert, log, undo, br, stat,
       bisect, serve) is a stub at this version.
 
-      The git group also works as plain git commands: this formula links git-land,
-      git-sync, git-fold, git-mend, git-view and git-web to the g4 binary, and
-      git's external-command mechanism runs `git-<cmd>` from PATH — so `git land`,
-      `git sync`, `git fold`, `git mend`, `git view` and `git web` work in any
-      repository with zero per-repo configuration.
+      The git group is entered through GIT, not through g4's own command list:
+      this formula links git-g4 to the g4 binary, and git's external-command
+      mechanism runs it when you type `git g4 …` — so `git g4 land`, `git g4 sync`,
+      `git g4 fold`, `git g4 mend`, `git g4 view` and `git g4 web` work in any
+      repository with zero per-repo configuration. The group is deliberately
+      absent from `g4 --help` and the completions — `git g4` is the only surface.
+      The plain `git land` form is deliberately NOT installed: a `git-<cmd>`
+      external on PATH beats a repository's own `git land` aliases, so g4 never
+      places one.
 
       The binary does not link libfuse: the mount paths load libfuse.2.dylib with
       dlopen at execution time, so every command — `g4 git` included — runs on a
@@ -120,10 +125,15 @@ class G4 < Formula
   end
 
   test do
-    # --help smokes only: the TUI (`g4 git view`) and the web server
-    # (`g4 git web`) are interactive and are not formula-tested. Assert on the
+    # --help smokes only: the TUI (`git g4 view`) and the web server
+    # (`git g4 web`) are interactive and are not formula-tested. Assert on the
     # usage lines, which survive argument changes, rather than on about text.
-    assert_match(/Usage: g4 git/, shell_output("#{bin}/g4 git --help"))
-    assert_match(/Usage: g4 git land/, shell_output("#{bin}/g4 git land --help"))
+    # The git-g4 leg is the ONLY surface smoke (plan 0003 row 2.34): the group
+    # is entered through the symlink (the argv[0] dispatch rewrites the
+    # invocation to `g4 git land …`), and the `g4 git` registration itself is
+    # HIDDEN from `g4 --help` — the direct spelling is deliberately untested
+    # and untaught.
+    assert_match(/Usage: g4 git land/, shell_output("#{bin}/git-g4 land --help"))
+    assert_match(/Usage: g4 git sync/, shell_output("#{bin}/git-g4 sync --help"))
   end
 end
