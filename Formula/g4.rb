@@ -9,13 +9,13 @@ class G4 < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.6/g4-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.7/g4-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.6/g4-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.6/g4-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.7/g4-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.7/g4-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.6"
+  version "0.1.7"
   sha256 on_system_conditional(
     macos: "9e9599d3c99929af6e80304a1168ef4e46bb7e714a57c15d80cc458e464ea9e9",
     linux: on_arch_conditional(
@@ -104,6 +104,33 @@ class G4 < Formula
       The plain `git land` form is deliberately NOT installed: a `git-<cmd>`
       external on PATH beats a repository's own `git land` aliases, so g4 never
       places one.
+
+      Homebrew installs shell completions for bash and zsh, but it deliberately
+      never edits your rc files — <TAB> completion stays inert until your shell
+      is wired to load them.
+
+      zsh: the script lands in $(brew --prefix)/share/zsh/site-functions, which
+      `brew shellenv` adds to FPATH. Ensure `eval "$(brew shellenv)"` runs before
+      completion initialises (with oh-my-zsh, before the line that sources it —
+      oh-my-zsh calls compinit itself), and add to ~/.zshrc unless your setup
+      already runs compinit:
+
+        autoload -Uz compinit
+        compinit
+
+      zsh caches the completion list in ~/.zcompdump; if one already exists
+      from before this install, refresh it once: `rm -f ~/.zcompdump`.
+
+      bash: install one of the bash-completion formulae and source the loader
+      from ~/.bash_profile:
+
+        brew install bash-completion      # for the macOS system bash (3.2)
+        brew install bash-completion@2    # instead, for Homebrew bash 4+
+        [ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ] && \
+          . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+
+      `g4 <TAB>` completes g4's own subcommands; `git g4 <TAB>` is not completed
+      — git's own completion does not know external commands.
 
       The binary does not link libfuse: the mount paths load libfuse.2.dylib with
       dlopen at execution time, so every command — `g4 git` included — runs on a
