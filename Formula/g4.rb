@@ -9,18 +9,18 @@ class G4 < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.5/g4-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.6/g4-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.5/g4-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.5/g4-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.6/g4-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.6/g4-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.5"
+  version "0.1.6"
   sha256 on_system_conditional(
-    macos: "e670c0f1dde114b026f7500f03e7c0553d9725dde5d36340c17f9c1a641da607",
+    macos: "9e9599d3c99929af6e80304a1168ef4e46bb7e714a57c15d80cc458e464ea9e9",
     linux: on_arch_conditional(
-      arm:   "0704a7d2be5696166c5bd8a6bd6a51e24900ba84d91d86a59de912e4b51b273b",
-      intel: "af4dde116de345361efff872e5274efd08910135047cec6ebff95f53bc5df808",
+      arm:   "12f9eea970b311f9cfcbf29d7e6e1a2dc8f6fc98cdafe819d09961d22f0e1daa",
+      intel: "170144e312e7beeae59e5d712e256b614eff2b54638737842717f81f3bce5a92",
     ),
   )
   license :cannot_represent
