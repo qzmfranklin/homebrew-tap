@@ -18,31 +18,52 @@ Identity-aware proxy CLI: dev pods, SSH, git, and model access.
 brew install qzmfranklin/tap/g4
 ```
 
-Linear-trunk version control: a FUSE virtual filesystem for mounting the
-repository, plus the git collaboration commands `land`, `sync`, `fold`,
-`mend`, `view`, `web` — usable on any plain git repository, entered
-through GIT as `git g4 land`, `git g4 sync`, and so on. The formula
-links ONE `git-g4` symlink and that is the only surface: the group is
-deliberately absent from `g4 --help` and the completions. The plain
-`git land` form is also deliberately NOT installed: a `git-<cmd>`
-external on PATH would beat a repository's own aliases.
-
-The git commands need NOTHING installed — no macFUSE, no
-libfuse. Only `g4 mount`'s disk flavor uses the FUSE library, loading it
-at runtime when you mount; when it is absent the mount refuses with the
-one-line remedy (`brew install --cask macfuse`) instead of crashing, and
-`g4 mount --flavor=bypass` needs no macFUSE at all.
+Linear-trunk version control: the FUSE virtual filesystem for
+mounting the repository. Only `g4 mount`'s disk flavor uses the FUSE
+library, loading it at runtime when you mount; when it is absent the
+mount refuses with the one-line remedy (`brew install --cask macfuse`)
+instead of crashing, and `g4 mount --flavor=bypass` needs no macFUSE at
+all. The git collaboration commands live in their own product — the
+`yag` formula below.
 
 #### Ubuntu (amd64 / arm64)
 
 The same binary ships as .deb release assets — install directly:
 
 ```sh
-curl -LO https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.8/g4-0.1.8-linux-amd64.deb
-sudo dpkg -i g4-0.1.8-linux-amd64.deb
+curl -LO https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.9/g4-0.1.9-linux-amd64.deb
+sudo dpkg -i g4-0.1.9-linux-amd64.deb
 ```
 
-(arm64: the same lines with `g4-0.1.8-linux-arm64.deb`.)
+(arm64: the same lines with `g4-0.1.9-linux-arm64.deb`.)
+
+### yag
+
+```sh
+brew install qzmfranklin/tap/yag
+```
+
+Workspace-sync git tooling: the `land`/`sync`/`fold`/`mend`/`view`/
+`web`/`serve` collaboration verbs, invoked DIRECTLY as `yag land`,
+`yag sync`, and so on — no `git yag` passthrough and no `git-yag`
+symlink. Needs git >= 2.38 (the sync model uses `git merge-tree
+--write-tree`).
+
+On Linux the formula is a single prebuilt binary against glibc >= 2.35
+(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
+plain `brew install qzmfranklin/tap/yag` works; on older glibc use
+`brew install --ignore-dependencies qzmfranklin/tap/yag` — the
+formula carries no real dependencies, so Homebrew's synthetic global
+gcc/glibc deps are safe to skip.
+
+The same binary ships as .deb release assets — install directly:
+
+```sh
+curl -LO https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.1.0/yag-0.1.0-linux-amd64.deb
+sudo dpkg -i yag-0.1.0-linux-amd64.deb
+```
+
+(arm64: the same lines with `yag-0.1.0-linux-arm64.deb`.)
 
 ## Note on code signing
 
