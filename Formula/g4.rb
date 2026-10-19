@@ -9,18 +9,18 @@ class G4 < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.7/g4-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.8/g4-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.7/g4-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.7/g4-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.8/g4-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.8/g4-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.7"
+  version "0.1.8"
   sha256 on_system_conditional(
-    macos: "9e9599d3c99929af6e80304a1168ef4e46bb7e714a57c15d80cc458e464ea9e9",
+    macos: "4e965342c9a0a3e08c9a29ec7f43793bb629795a772fd4c38a36dde56f7969ff",
     linux: on_arch_conditional(
-      arm:   "12f9eea970b311f9cfcbf29d7e6e1a2dc8f6fc98cdafe819d09961d22f0e1daa",
-      intel: "170144e312e7beeae59e5d712e256b614eff2b54638737842717f81f3bce5a92",
+      arm:   "ab1a2c12d82329663dc17195b553970953acdbc62e453cfd43efcedd6175a62d",
+      intel: "447daf0632219e2f54508efd09525f68f6b7c682c5136e0ac0905d3ad08db954",
     ),
   )
   license :cannot_represent
@@ -126,7 +126,7 @@ class G4 < Formula
 
         brew install bash-completion      # for the macOS system bash (3.2)
         brew install bash-completion@2    # instead, for Homebrew bash 4+
-        [ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ] && \
+        [ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ] && \\
           . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 
       `g4 <TAB>` completes g4's own subcommands; `git g4 <TAB>` is not completed
