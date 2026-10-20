@@ -9,18 +9,18 @@ class Iap < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.12.0/darwin.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.15.0/darwin.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.12.0/linux/arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.12.0/linux/amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.15.0/linux/arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.15.0/linux/amd64.xz",
     ),
   )
-  version "5.12.0"
+  version "5.15.0"
   sha256 on_system_conditional(
-    macos: "bb60e8c47bc483e452763261dabf8c7688d98437fc491afac84ae7aacc3576ed",
+    macos: "8f18c7726d4abd40a5a5a88518e3add0d209341303634f0d204751a87c318951",
     linux: on_arch_conditional(
-      arm:   "b7d6b75608c62875f782fe1b95a54f059e0ca58e0cb4c39e84a5e4cdd4e830f2",
-      intel: "679d4c6bc849a9cb601083eb855486b05951f54cac1580f897af67da76eae447",
+      arm:   "53e20bb611cd93b7c187ae8107d6c69a36745e1eacce4fba90b37f0aca1fd81e",
+      intel: "407fc5fc9f888802dc220734b3592f5c1dadf7c1e5839ddc022f8251aa608a10",
     ),
   )
   license :cannot_represent
