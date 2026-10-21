@@ -108,6 +108,20 @@ plain `brew install qzmfranklin/tap/obscura` works; on older glibc use
 formula carries no real dependencies, so Homebrew's synthetic global
 gcc/glibc deps are safe to skip.
 
+## Casks
+
+### courier
+
+```sh
+brew install --cask qzmfranklin/tap/courier
+```
+
+AI coding agent: a long-lived daemon owns the backend and every
+`~/.courier` state write, with the CEF desktop app as its frontend
+(the `courier run`/`chat` TUI, `courier web` and the `courier` CLI are
+frontends over the same daemon). The cask installs the macOS app
+(universal arm64 + x86_64); the same binary carries the CLI subcommands.
+
 ## Note on code signing
 
 Artifacts here are ad-hoc signed, not notarized. Homebrew strips the
