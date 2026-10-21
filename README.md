@@ -65,6 +65,31 @@ sudo dpkg -i yag-0.1.0-linux-amd64.deb
 
 (arm64: the same lines with `yag-0.1.0-linux-arm64.deb`.)
 
+### klash
+
+```sh
+brew install qzmfranklin/tap/klash
+```
+
+Clash-compatible rule-based proxy client: one unprivileged `klash
+serve` daemon owning all state, with the CLI as a frontend over a
+local socket. On macOS the same token is a cask —
+`brew install --cask qzmfranklin/tap/klash` — installing the GUI app
+with the CLI linked into `$(brew --prefix)/bin`.
+
+On Linux the formula is a single prebuilt binary against glibc >= 2.35
+(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
+plain `brew install qzmfranklin/tap/klash` works; on older glibc use
+`brew install --ignore-dependencies qzmfranklin/tap/klash` — the
+formula carries no real dependencies, so Homebrew's synthetic global
+gcc/glibc deps are safe to skip.
+
+TUN capture is not available in the brew install: the per-call
+elevation helper does not ship beside the binary, so `klash tun`
+reports that it cannot locate klash-tun-helper. Every other verb
+(serve, status, profile, proxy, conn, traffic, ...) is fully
+functional.
+
 ## Note on code signing
 
 Artifacts here are ad-hoc signed, not notarized. Homebrew strips the
