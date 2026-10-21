@@ -90,6 +90,24 @@ reports that it cannot locate klash-tun-helper. Every other verb
 (serve, status, profile, proxy, conn, traffic, ...) is fully
 functional.
 
+### obscura
+
+```sh
+brew install qzmfranklin/tap/obscura
+```
+
+Headless browser engine: CDP and MCP servers with a fetch/scrape CLI.
+Two binaries install side by side -- `obscura` and the `obscura-worker`
+its scrape path spawns internally (nothing to run or configure by hand).
+Rendering uses the system's own font collection; no fonts are bundled.
+
+On Linux the formula is a single prebuilt binary against glibc >= 2.35
+(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
+plain `brew install qzmfranklin/tap/obscura` works; on older glibc use
+`brew install --ignore-dependencies qzmfranklin/tap/obscura` -- the
+formula carries no real dependencies, so Homebrew's synthetic global
+gcc/glibc deps are safe to skip.
+
 ## Note on code signing
 
 Artifacts here are ad-hoc signed, not notarized. Homebrew strips the
