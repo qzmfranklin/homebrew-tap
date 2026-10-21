@@ -9,16 +9,16 @@ class Obscura < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/obscura-0.2.4.2/obscura-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/obscura-0.2.4.3/obscura-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/obscura-0.2.4.2/obscura-linux-amd64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/obscura-0.2.4.3/obscura-linux-amd64.tar.xz",
     ),
   )
-  version "0.2.4.2"
+  version "0.2.4.3"
   sha256 on_system_conditional(
-    macos: "a8a13f842571d99f6fdefc1f9aef40000382c813389a5d6d992b086b0bb52e62",
+    macos: "a146dca466d037cf91a9c8f742dfc97b1cca0777413f77320f81336485e1be41",
     linux: on_arch_conditional(
-      intel: "1611db10eacf672f086a8dab50a530e72819602faab8a29d0b2b72d0bbfc6179",
+      intel: "dfbb7ccee7dd018097f8bc14b34055235a020cc7448980e074fb3b2577bc1c0b",
     ),
   )
   license "Apache-2.0"
