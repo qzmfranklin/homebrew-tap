@@ -1,5 +1,5 @@
 {
-  "kind": "cask",
+  "kind": "formula",
   "name": "klash",
   "version": "0.1.0"
 }
