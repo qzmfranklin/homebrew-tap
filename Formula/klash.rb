@@ -8,33 +8,63 @@ class Klash < Formula
   # Platform choice lives in the argument, not in an on_macos block:
   # brew does not allow `url`/`sha256` inside an on_system block.
   url on_system_conditional(
+    macos: on_arch_conditional(
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.2.0/klash-darwin-arm64.tar.xz",
+    ),
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.1.0/klash-linux-amd64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.2.0/klash-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.0"
+  version "0.2.0"
   sha256 on_system_conditional(
+    macos: on_arch_conditional(
+      arm:   "54fa8a3a5eb798eee7ea4bcba336642db02464b6d0516bcc53a36a1ded96f792",
+    ),
     linux: on_arch_conditional(
-      intel: "9a0be78fb96947e57fffcdef65e8624ce92524d3f04f0a7406ba975baa9194ba",
+      intel: "a52b61c0b5982129792a9879b5537ff036de41e327075eba440feb730352bc24",
     ),
   )
   license :cannot_represent
 
   def install
-    bin.install "klash"
+    # Both binaries from the tarball (plan 0007 row 4): `klash` plus the TUN
+    # helper beside it. The daemon locates the helper as a SIBLING of the
+    # running executable; bin.install lands both in the same keg bin directory,
+    # which brew links as one, so the sibling relation survives the install
+    # exactly as it ships in the tarball.
+    bin.install "klash", "klash-tun-helper"
 
-    # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
-    # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
-    # or stale-signed Mach-O. Writing the file also invalidates any prior
-    # signature, so it must be re-signed after install.
-    #
-    # chmod first: Homebrew stages files read-only, and both xattr and codesign
-    # need to WRITE to the binary (xattr fails with EACCES otherwise).
+    # Ad-hoc codesign on macOS, for BOTH Mach-Os (this formula sets
+    # adhoc_sign = False because the generated block signs only the primary
+    # bin). This is INTENTIONAL and load-bearing, not a workaround: the
+    # binaries are unsigned, and macOS refuses to exec an unsigned or
+    # stale-signed Mach-O — and the daemon spawns `klash-tun-helper` as a
+    # per-call subprocess, so an unsigned helper would break TUN capture on
+    # the spot. Writing the file also invalidates any prior signature, so it
+    # must be re-signed after install. chmod first: Homebrew stages files
+    # read-only, and both xattr and codesign need to WRITE to the binary.
     if OS.mac?
-      chmod 0755, bin/"klash"
-      system "/usr/bin/xattr", "-cr", bin/"klash"
-      system "/usr/bin/codesign", "--force", "--sign", "-", bin/"klash"
+      %w[klash klash-tun-helper].each do |name|
+        target = bin/name
+        chmod 0755, target
+        system "/usr/bin/xattr", "-cr", target
+        system "/usr/bin/codesign", "--force", "--sign", "-", target
+      end
     end
+
+    # `--print SHELL` writes the script to STDOUT and installs nothing; a
+    # bare `klash complete` would edit the user's rc file, which a
+    # formula must not do.
+    #
+    # generate_completions_from_executable appends the shell name as the
+    # final argument and writes each script where brew expects it, so it
+    # replaces one hand-rolled safe_popen_read per shell.
+    generate_completions_from_executable(
+      bin/"klash",
+      "complete",
+      "--print",
+      shells: [:zsh],
+    )
   end
 
   def post_install
@@ -56,23 +86,20 @@ class Klash < Formula
 
 
   def caveats
-    <<~EOS
-      klash ships as a single prebuilt binary and runs on ubuntu22 and newer
-      (glibc >= 2.35). On hosts with glibc < 2.39 (Ubuntu 22.04 and older),
-      Homebrew adds gcc and glibc as implicit dependencies to every formula and
-      would build them from source; klash's formula carries no real dependencies,
-      so install it there with:
+    on_linux do
+      <<~EOS
+        klash ships as prebuilt binaries and runs on ubuntu22 and newer
+        (glibc >= 2.35). On hosts with glibc < 2.39 (Ubuntu 22.04 and older),
+        Homebrew adds gcc and glibc as implicit dependencies to every formula and
+        would build them from source; klash's formula carries no real dependencies,
+        so install it there with:
 
-        brew install --ignore-dependencies klash
+          brew install --ignore-dependencies klash
 
-      On glibc >= 2.39 hosts (Ubuntu 24.04+, Homebrew's own supported set),
-      plain `brew install klash` works with no extra pulls.
-
-      TUN capture is not available in this build: the per-call elevation helper
-      does not yet ship beside the binary, so `klash tun` reports that it cannot
-      locate klash-tun-helper. Every other verb (serve, status, profile, proxy,
-      conn, traffic, ...) is fully functional.
-    EOS
+        On glibc >= 2.39 hosts (Ubuntu 24.04+, Homebrew's own supported set),
+        plain `brew install klash` works with no extra pulls.
+      EOS
+    end
   end
 
   test do
