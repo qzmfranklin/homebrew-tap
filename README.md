@@ -90,6 +90,25 @@ reports that it cannot locate klash-tun-helper. Every other verb
 (serve, status, profile, proxy, conn, traffic, ...) is fully
 functional.
 
+### magika
+
+```sh
+brew install qzmfranklin/tap/magika
+```
+
+File-content identification with deep learning (the first-party Rust
+port of Google's magika): one self-contained binary identifies 294
+content types from file bytes — the model is embedded, no runtime
+downloads, CPU-only. `magika <file>`, `magika -r <dir>`, `--json`,
+`--mime-type`, `--format` with the full placeholder engine.
+
+On Linux the formula is a single prebuilt binary against glibc >= 2.35
+(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
+plain `brew install qzmfranklin/tap/magika` works; on older glibc use
+`brew install --ignore-dependencies qzmfranklin/tap/magika` -- the
+formula carries no real dependencies, so Homebrew's synthetic global
+gcc/glibc deps are safe to skip.
+
 ### obscura
 
 ```sh
