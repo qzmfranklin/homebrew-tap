@@ -141,6 +141,21 @@ AI coding agent: a long-lived daemon owns the backend and every
 frontends over the same daemon). The cask installs the macOS app
 (universal arm64 + x86_64); the same binary carries the CLI subcommands.
 
+### ftop
+
+```sh
+brew install --cask qzmfranklin/tap/ftop
+```
+
+Floating macOS status-monitor panel (Apple Silicon, macOS 15+): per-core
+CPU and frequency, memory, GPU, power and the top processes, drawn in one
+compact always-available window. Only the `ftop` command is linked into
+PATH and the bundle stays in the Caskroom, so `ftop update` can replace
+the copy brew owns; `ftop` opens the panel, `ftop doctor` reports which
+readings are available, and one `sudo ftop grant` extends the process list
+to every user (the setuid helper lives outside the bundle, so updates
+never change what runs as root).
+
 ## Note on code signing
 
 Artifacts here are ad-hoc signed, not notarized. Homebrew strips the
