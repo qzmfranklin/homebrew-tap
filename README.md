@@ -149,12 +149,13 @@ brew install --cask qzmfranklin/tap/ftop
 
 Floating macOS status-monitor panel (Apple Silicon, macOS 15+): per-core
 CPU and frequency, memory, GPU, power and the top processes, drawn in one
-compact always-available window. Only the `ftop` command is linked into
-PATH and the bundle stays in the Caskroom, so `ftop update` can replace
-the copy brew owns; `ftop` opens the panel, `ftop doctor` reports which
-readings are available, and one `sudo ftop grant` extends the process list
-to every user (the setuid helper lives outside the bundle, so updates
-never change what runs as root).
+compact always-available window. The app installs into `/Applications` and
+the `ftop` command is linked into your PATH; `ftop` opens the panel,
+`ftop update` upgrades the brew copy in place (it runs
+`brew upgrade --cask ftop`), `ftop doctor` reports which readings are
+available, and one `sudo ftop grant` extends the process list to every user
+(the setuid helper lives outside the bundle, so updates never change what
+runs as root).
 
 ## Note on code signing
 
