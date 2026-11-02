@@ -127,6 +127,27 @@ plain `brew install qzmfranklin/tap/obscura` works; on older glibc use
 formula carries no real dependencies, so Homebrew's synthetic global
 gcc/glibc deps are safe to skip.
 
+### aseprite
+
+```sh
+brew install qzmfranklin/tap/aseprite
+```
+
+Sprite animation and batch-export CLI (the pure-Rust aseprite port):
+headless pixel-animation authoring -- build sprites (layers, cels,
+frames, tags, palettes), draw, composite, quantize and dither, and
+export .aseprite / PNG / GIF / spritesheets deterministically, all in
+one self-contained binary (every codec compiled in, no runtime
+downloads). The GUI is not part of the port; `aseprite -b` is batch
+mode.
+
+On Linux the formula is a single prebuilt binary against glibc >= 2.35
+(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
+plain `brew install qzmfranklin/tap/aseprite` works; on older glibc use
+`brew install --ignore-dependencies qzmfranklin/tap/aseprite` -- the
+formula carries no real dependencies, so Homebrew's synthetic global
+gcc/glibc deps are safe to skip.
+
 ## Casks
 
 ### courier
