@@ -6,8 +6,9 @@
 # tap repo's GitHub releases (surf-<ver>-<triple>.tar.gz — `surf` + `worker`
 # at the archive root): the linux one is assembled and verified by
 # modules/surf/publish/package.sh, the darwin-arm64 one by the same-flags
-# deterministic assembly from the cross-built hardened pair (tip 7b63368af,
-# preserved on g0733 at /cache/quzhongming/surf-dist).
+# deterministic assembly from the cross-built hardened pair (cross-built at
+# the dev tip — c1ba76f39 for 0.2.5 — and preserved on g0733 at
+# /cache/quzhongming/surf-dist).
 #
 # THE WORKER INSTALLS INTO bin BESIDE surf — ON PURPOSE. The CLI locates its
 # worker sibling at <exe_dir>/worker (private/cli/fetch/scrape's
@@ -27,19 +28,19 @@ class Surf < Formula
   homepage "https://github.com/qzmfranklin/homebrew-tap"
   url on_system_conditional(
     macos: on_arch_conditional(
-      arm: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-v0.2.4/surf-0.2.4-aarch64-apple-darwin.tar.gz",
+      arm: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-v0.2.5/surf-0.2.5-aarch64-apple-darwin.tar.gz",
     ),
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-v0.2.4/surf-0.2.4-x86_64-unknown-linux-gnu.tar.gz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-v0.2.5/surf-0.2.5-x86_64-unknown-linux-gnu.tar.gz",
     ),
   )
-  version "0.2.4"
+  version "0.2.5"
   sha256 on_system_conditional(
     macos: on_arch_conditional(
-      arm: "e41fff27e77b0f78ed91cbfa142106f76819ca4efd30f390cddb58f55ba2bb67",
+      arm: "b9daf6b057526f0fbb51203e84916641e5e1ecced01e672cc070c89491556d22",
     ),
     linux: on_arch_conditional(
-      intel: "976c264f76690e606f549927d8d419836bdb3dc1b57c839efb57c984e43faa6a",
+      intel: "092de3691dcc771e4a7591673be4875b16f1d190317c708b9900dfb1ff3dfff9",
     ),
   )
   license :cannot_represent
