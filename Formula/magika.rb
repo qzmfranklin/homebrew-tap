@@ -9,24 +9,29 @@ class Magika < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0-dev/magika-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0/magika-1.2.0-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0-dev/magika-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0-dev/magika-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0/magika-1.2.0-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0/magika-1.2.0-linux-amd64.xz",
     ),
   )
-  version "1.2.0-dev"
+  version "1.2.0"
   sha256 on_system_conditional(
-    macos: "46a5bf7c251104fe24adb1a0e9954a46ed21b9ece5d097c108f4a922fdfe0ea0",
+    macos: "06142b7fa2cccd336c0af0f2c01cd70f0305ad6be5dfe561a07945fcacfcc62d",
     linux: on_arch_conditional(
-      arm:   "adbaabe477cca35114ecd805c19bf7a828ab28f7df5dad53150d311c815d7c44",
-      intel: "982f5c7d3abfae4ee4e1f2fe338397eaacda9c1c15744e95a1560472ba15f0fa",
+      arm:   "af8e4f536d68796754a561469ccc2eba20a19a3287586a8c88c46af287ab94ae",
+      intel: "e31da08b35e16a07f7beb3f14e5e35c6a23b796d8805114fa5ffdc059c937056",
     ),
   )
   license :cannot_represent
 
   def install
-    bin.install "magika"
+    # The asset is the BINARY ITSELF, xz'd by brew_artifact (the single-file
+    # form, rules_brew plan 0006: a lone binary ships as bare .xz, never a tar
+    # containing one file). Homebrew stages a bare .xz download DECOMPRESSED
+    # under the ASSET name — the version-suffixed magika-{version}-{os}-{arch},
+    # not `magika` — so glob it and install under the canonical command name.
+    bin.install Dir["magika-*"].first => "magika"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
