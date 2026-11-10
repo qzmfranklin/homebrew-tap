@@ -9,16 +9,22 @@ class CourierLinux < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   url on_system_conditional(
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/courier-linux-0.1.13/Courier-linux-amd64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/courier-0.1.14/courier-0.1.14-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.13"
+  version "0.1.14"
   sha256 on_system_conditional(
     linux: on_arch_conditional(
-      intel: "7d7c18dbc2546ded7690292eb01f8a473141e2082823b30513f2c8b5a76b7e51",
+      intel: "2912b28a7f176c740e6c685fcce95555fd7dc5c1e4d98cec5837ef0cd1f8909c",
     ),
   )
   license :cannot_represent
+
+  # Linux-only formula: this product's macOS surface is the cask
+  # (rules_brew plan 0006 row 6.4).
+  on_macos do
+    raise "courier-linux is a Linux-only formula; on macOS use `brew install --cask courier` instead"
+  end
 
   def install
     # The archive is the CEF desktop app's FLAT runtime: the `desktop` binary
