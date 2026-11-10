@@ -9,24 +9,29 @@ class Aseprite < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.1/aseprite-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.2/aseprite-0.0.2-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.1/aseprite-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.1/aseprite-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.2/aseprite-0.0.2-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.2/aseprite-0.0.2-linux-amd64.xz",
     ),
   )
-  version "0.0.1"
+  version "0.0.2"
   sha256 on_system_conditional(
-    macos: "124237422cdb1cda21e89c084876ce2fe2e0ea90fcd162d22cb33f83b1b0ed9c",
+    macos: "a32a07bbc08b8b9908288b100c5edd875e7227e8128831cc6401eb0962586dcf",
     linux: on_arch_conditional(
-      arm:   "017400597828a345489540232d8bc3710bbed4334b8dbe1fb901a478c1525f86",
-      intel: "0638659f3906f5e0d53a1f9b70040387286472f7ba7cc828e7ccfccf4c8d6cd9",
+      arm:   "044fb8162652be925f4dcb9abcb0b76d9e324cea9f6ce8290112e6a56dbbde93",
+      intel: "06a0cf72f7e5ddd0d986ad733916d2c42b9150123e66f39cac99857bf436a358",
     ),
   )
   license :cannot_represent
 
   def install
-    bin.install "aseprite"
+    # The asset is the BINARY ITSELF, xz'd by brew_artifact (the single-file
+    # form, rules_brew plan 0006: a lone binary ships as bare .xz, never a tar
+    # containing one file). Homebrew stages a bare .xz download DECOMPRESSED
+    # under the ASSET name — the version-suffixed aseprite-{version}-{os}-{arch},
+    # not `aseprite` — so glob it and install under the canonical command name.
+    bin.install Dir["aseprite-*"].first => "aseprite"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
