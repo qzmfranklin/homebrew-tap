@@ -9,24 +9,31 @@ class Yag < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.17.2/yag-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.17.3/yag-0.17.3-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.17.2/yag-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.17.2/yag-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.17.3/yag-0.17.3-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.17.3/yag-0.17.3-linux-amd64.xz",
     ),
   )
-  version "0.17.2"
+  version "0.17.3"
   sha256 on_system_conditional(
-    macos: "b3ec202ca1733250edd27d95bf2a98b0ba999b2f174a9f49191e62068e528ae3",
+    macos: "f7cf3fd8c8d347cba80d7f1923260765c0e81c057e9511869b9b22e7cbcb856e",
     linux: on_arch_conditional(
-      arm:   "fc0ae0507ed7a36e91832255e341ceb6c345f9734f7da754337194ef36c1d16b",
-      intel: "272d945d3ff8af9ae55f12641b5579eab3dd51946d0f40ad3a74c31f7b1ade7e",
+      arm:   "3a2ac3e0e3f9766e1acc602eee12e1c16be58a07835926bb8cb9b809cdc99378",
+      intel: "93dc9162ab36bbf63a481c8e844070f18750c602f9a7ac317c410b774c076a90",
     ),
   )
   license :cannot_represent
 
   def install
-    bin.install "yag"
+    # The asset is the BINARY ITSELF, xz'd by brew_artifact (the single-file
+    # form, rules_brew plan 0006: a lone binary ships as bare .xz, never a tar
+    # containing one file). Homebrew stages a bare .xz download DECOMPRESSED
+    # under the ASSET name — the version-suffixed yag-{version}-{os}-{arch},
+    # not `yag` — so glob it and install under the canonical command name:
+    # users invoke yag directly (`yag land`, `yag sync`, ...), no git-yag
+    # symlink, no argv[0] dispatch.
+    bin.install Dir["yag-*"].first => "yag"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
