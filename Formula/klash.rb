@@ -9,19 +9,19 @@ class Klash < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   url on_system_conditional(
     macos: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.3.0/klash-0.3.0-darwin-arm64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.4.0/klash-0.4.0-darwin-arm64.tar.xz",
     ),
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.3.0/klash-0.3.0-linux-amd64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.4.0/klash-0.4.0-linux-amd64.tar.xz",
     ),
   )
-  version "0.3.0"
+  version "0.4.0"
   sha256 on_system_conditional(
     macos: on_arch_conditional(
-      arm:   "e19d23003c3ed36da77250c28be8b37aaa29eb629e5b19e8c8c6b51d967f2a42",
+      arm:   "9b2a7e3f5760aaa62514f4eecc58355320abaa1e5c8d3417667f86b7a6ae00d8",
     ),
     linux: on_arch_conditional(
-      intel: "3bae68485639dc6f0753065a5c59746584c895510e14287da5808fd1f79e14b1",
+      intel: "a94fee5160bf5b79a624613759eee4e564ab095fc147205a110302ec7295e770",
     ),
   )
   license :cannot_represent
@@ -78,16 +78,10 @@ class Klash < Formula
   def caveats
     on_linux do
       <<~EOS
-        klash ships as prebuilt binaries and runs on ubuntu22 and newer
-        (glibc >= 2.35). On hosts with glibc < 2.39 (Ubuntu 22.04 and older),
-        Homebrew adds gcc and glibc as implicit dependencies to every formula and
-        would build them from source; klash's formula carries no real dependencies,
-        so install it there with:
-
-          brew install --ignore-dependencies klash
-
-        On glibc >= 2.39 hosts (Ubuntu 24.04+, Homebrew's own supported set),
-        plain `brew install klash` works with no extra pulls.
+        klash's linux binary is fully static (musl) — no glibc requirement; it
+        runs on any linux the kernel supports. No interpreter, no shared
+        libraries: the single binary is the whole install, on any distribution
+        however old.
       EOS
     end
   end
