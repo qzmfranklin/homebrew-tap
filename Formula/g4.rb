@@ -9,18 +9,18 @@ class G4 < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.11/g4-0.1.11-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.0/g4-0.2.0-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.11/g4-0.1.11-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.11/g4-0.1.11-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.0/g4-0.2.0-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.0/g4-0.2.0-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.11"
+  version "0.2.0"
   sha256 on_system_conditional(
-    macos: "1dd7acd4342c151df101f16029d0b491a7cc64207d80c033900384d66c79788a",
+    macos: "7c8b9900b702ea5f9fb8db7d08da7431bbcab28bb35cfcbbdb31c9559c1d49f0",
     linux: on_arch_conditional(
-      arm:   "66bba3d5ffc7c270f75b38e5ede183d34834ad61fd36ff7771d8657592f6447c",
-      intel: "8c4aa42e60cf9d415cf36814d46c7030103d87f19d8b3502d44cbfa9030b63f4",
+      arm:   "6162be2ed7d642ebae2ee96693574c80e02e6fc1f50b84972426f977eabf5a07",
+      intel: "d236013253d8d08b206571efcbf7eb1f4aa82e4ffdc4de81681ad3fcbae5ffe4",
     ),
   )
   license :cannot_represent
@@ -75,57 +75,67 @@ class G4 < Formula
 
 
   def caveats
-    <<~EOS
-      g4 ships one working surface at this version:
+    mac = on_macos do
+      <<~EOS
+        g4 ships one working surface at this version:
 
-        g4 mount    the FUSE virtual filesystem (g4 umount tears it down)
+          g4 mount    the FUSE virtual filesystem (g4 umount tears it down)
 
-      Every other subcommand (sync, diff, land, pick, revert, log, undo, br, stat,
-      bisect, serve) is a stub at this version.
+        Every other subcommand (sync, diff, land, pick, revert, log, undo, br, stat,
+        bisect, serve) is a stub at this version.
 
-      Homebrew installs shell completions for bash and zsh, but it deliberately
-      never edits your rc files — <TAB> completion stays inert until your shell
-      is wired to load them.
+        Homebrew installs shell completions for bash and zsh, but it deliberately
+        never edits your rc files — <TAB> completion stays inert until your shell
+        is wired to load them.
 
-      zsh: the script lands in $(brew --prefix)/share/zsh/site-functions, which
-      `brew shellenv` adds to FPATH. Ensure `eval "$(brew shellenv)"` runs before
-      completion initialises (with oh-my-zsh, before the line that sources it —
-      oh-my-zsh calls compinit itself), and add to ~/.zshrc unless your setup
-      already runs compinit:
+        zsh: the script lands in $(brew --prefix)/share/zsh/site-functions, which
+        `brew shellenv` adds to FPATH. Ensure `eval "$(brew shellenv)"` runs before
+        completion initialises (with oh-my-zsh, before the line that sources it —
+        oh-my-zsh calls compinit itself), and add to ~/.zshrc unless your setup
+        already runs compinit:
 
-        autoload -Uz compinit
-        compinit
+          autoload -Uz compinit
+          compinit
 
-      zsh caches the completion list in ~/.zcompdump; if one already exists
-      from before this install, refresh it once: `rm -f ~/.zcompdump`.
+        zsh caches the completion list in ~/.zcompdump; if one already exists
+        from before this install, refresh it once: `rm -f ~/.zcompdump`.
 
-      bash: install one of the bash-completion formulae and source the loader
-      from ~/.bash_profile:
+        bash: install one of the bash-completion formulae and source the loader
+        from ~/.bash_profile:
 
-        brew install bash-completion      # for the macOS system bash (3.2)
-        brew install bash-completion@2    # instead, for Homebrew bash 4+
-        [ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ] && \\
-          . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+          brew install bash-completion      # for the macOS system bash (3.2)
+          brew install bash-completion@2    # instead, for Homebrew bash 4+
+          [ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ] && \\
+            . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 
-      `g4 <TAB>` completes g4's own subcommands.
+        `g4 <TAB>` completes g4's own subcommands.
 
-      The binary does not link libfuse: the mount paths load libfuse.2.dylib with
-      dlopen at execution time, so every command runs on a machine with no
-      macFUSE installed. The formula deliberately declares no depends_on (proper
-      macFUSE use requires a reboot — far too heavy to impose on every install);
-      only the disk-flavor `g4 mount` needs the library, and when libfuse is
-      absent it refuses at runtime with the remedy:
+        The binary does not link libfuse: the mount paths load libfuse.2.dylib with
+        dlopen at execution time, so every command runs on a machine with no
+        macFUSE installed. The formula deliberately declares no depends_on (proper
+        macFUSE use requires a reboot — far too heavy to impose on every install);
+        only the disk-flavor `g4 mount` needs the library, and when libfuse is
+        absent it refuses at runtime with the remedy:
 
-        brew install --cask macfuse
+          brew install --cask macfuse
 
-      The bypass flavor, `g4 mount --flavor=bypass`, is a passthrough mount that
-      needs no macFUSE at all.
+        The bypass flavor, `g4 mount --flavor=bypass`, is a passthrough mount that
+        needs no macFUSE at all.
 
-      The published binary is ad-hoc signed, not notarized. Homebrew strips the
-      quarantine attribute on install, so it runs when installed through brew; a
-      binary downloaded directly from the release page may additionally need
-      `xattr -cr <path>` before macOS will exec it.
-    EOS
+        The published binary is ad-hoc signed, not notarized. Homebrew strips the
+        quarantine attribute on install, so it runs when installed through brew; a
+        binary downloaded directly from the release page may additionally need
+        `xattr -cr <path>` before macOS will exec it.
+      EOS
+    end
+    linux = on_linux do
+      <<~EOS
+        g4's linux binary is fully static (musl) — no glibc requirement; it runs
+        on any linux the kernel supports. No interpreter, no shared libraries:
+        the single binary is the whole install, on any distribution however old.
+      EOS
+    end
+    mac || linux
   end
 
   test do
