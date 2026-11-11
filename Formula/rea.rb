@@ -9,21 +9,21 @@ class Rea < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   url on_system_conditional(
     macos: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.1.0/rea-0.1.0-darwin-arm64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.2.0/rea-0.2.0-darwin-arm64.xz",
     ),
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.1.0/rea-0.1.0-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.1.0/rea-0.1.0-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.2.0/rea-0.2.0-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.2.0/rea-0.2.0-linux-amd64.xz",
     ),
   )
-  version "0.1.0"
+  version "0.2.0"
   sha256 on_system_conditional(
     macos: on_arch_conditional(
-      arm:   "b43f2c2c20b24dbbe8b0ef8ccf92a3649a1a1efe1001b56210eb18f5fba13daa",
+      arm:   "a6ce62689fc9c66d3d0d6afa9b6eb273655ef2b313458f565786cbefd4b669f1",
     ),
     linux: on_arch_conditional(
-      arm:   "921c13bfa8b07cef23a3ce7cbf42d29bc29c5c2d0af0bab9be3eaa042e0f9027",
-      intel: "62b711ff7ee565aa92e51e1f178b08d32d25f9cc52ab5783f312cf49ee5d4090",
+      arm:   "f99634dfd0909b6022b46bf2c6018f4eb04f17a4da6194e77ae1466efc90da16",
+      intel: "2e7ce1518653310b44381b6c44a377e26af8fca16000bb0f8e6d0bdfc04d7471",
     ),
   )
   license :cannot_represent
@@ -37,6 +37,14 @@ class Rea < Formula
     # canonical command name.
     bin.install Dir["rea-*"].first => "rea"
 
+    # chmod first, UNCONDITIONALLY: a bare .xz carries no mode bits, so the
+    # decompressed binary lands 0644 and every later step that execs it gets
+    # EACCES on linux (the yag 0.18.0 linux tap install failed exactly here —
+    # the M6-found defect; the tar-form products never saw it). Homebrew also
+    # stages files read-only, and both xattr and codesign need to WRITE to the
+    # binary (xattr fails with EACCES otherwise).
+    chmod 0755, bin/"rea"
+
     # Ad-hoc codesign on macOS. This formula sets adhoc_sign = False and owns
     # the block HERE (the klash precedent) because the completion stanza below
     # EXECUTES the binary: the renderer splices this snippet BEFORE its own
@@ -45,11 +53,8 @@ class Rea < Formula
     # is INTENTIONAL and load-bearing, not a workaround: the binary is
     # unsigned, and macOS refuses to exec an unsigned or stale-signed Mach-O;
     # writing the file also invalidates any prior signature, so it must be
-    # re-signed after install. chmod first: Homebrew stages files read-only,
-    # and both xattr and codesign need to WRITE to the binary (xattr fails
-    # with EACCES otherwise).
+    # re-signed after install.
     if OS.mac?
-      chmod 0755, bin/"rea"
       system "/usr/bin/xattr", "-cr", bin/"rea"
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"rea"
     end
@@ -89,16 +94,11 @@ class Rea < Formula
   def caveats
     on_linux do
       <<~EOS
-        rea ships as a single prebuilt binary per arch and runs on ubuntu22 and
-        newer (glibc >= 2.35). On hosts with glibc < 2.39 (Ubuntu 22.04 and older),
-        Homebrew adds gcc and glibc as implicit dependencies to every formula and
-        would build them from source; rea's formula carries no real dependencies,
-        so install it there with:
-
-          brew install --ignore-dependencies rea
-
-        On glibc >= 2.39 hosts (Ubuntu 24.04+, Homebrew's own supported set),
-        plain `brew install rea` works with no extra pulls.
+        rea's linux binary is fully static (musl) — no glibc requirement; it
+        runs on any linux the kernel supports. No interpreter, no shared
+        libraries: the single binary is the whole install, on any distribution
+        however old. The formula carries no dependencies on any host, so plain
+        `brew install rea` works everywhere.
       EOS
     end
   end
