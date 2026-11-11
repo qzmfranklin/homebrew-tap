@@ -34,6 +34,13 @@ class Yag < Formula
     # users invoke yag directly (`yag land`, `yag sync`, ...), no git-yag
     # symlink, no argv[0] dispatch.
     bin.install Dir["yag-*"].first => "yag"
+    # A bare .xz carries no mode bits: the decompressed binary lands 0644 and
+    # every later step -- generate_completions_from_executable's run, the user's
+    # shell -- gets EACCES. macOS re-chmods inside its ad-hoc codesign stanza;
+    # linux needs it here (the 0.18.0 linux tap install failed exactly here,
+    # the first time the tap's linux arm was ever exercised -- every earlier
+    # box install rode the relayed tar.xz, which preserves the mode).
+    chmod 0755, bin/"yag"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
