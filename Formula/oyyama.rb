@@ -9,18 +9,18 @@ class Oyyama < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.0.0/oyyama-1.0.0-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.1.0/oyyama-1.1.0-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.0.0/oyyama-1.0.0-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.0.0/oyyama-1.0.0-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.1.0/oyyama-1.1.0-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.1.0/oyyama-1.1.0-linux-amd64.tar.xz",
     ),
   )
-  version "1.0.0"
+  version "1.1.0"
   sha256 on_system_conditional(
-    macos: "c6d97ccfad416e23356a1b73688f8f4fa451562a8e3ec49203a61e5b31c08846",
+    macos: "454b7affc5a9d10f5553996c8b6d94a79ea0f7020fb95182d6ebce1a4c39d084",
     linux: on_arch_conditional(
-      arm:   "a744fa748b6d5dbb46bec19dc6361755171d4e26f0abe83579617dc4f03cb3c8",
-      intel: "e20899d15231fa8f7b8a109f9a4b45e556f0d8ffda6334f7b5ed036dd0947713",
+      arm:   "59986018bc22343e80438a0c09358f73c4ac6d3c6813ea0805bc84c0385aac7c",
+      intel: "745c7b03733dfff5d188c768e2ea48897cf1a0e1fd06a633f63854cc4145f2e4",
     ),
   )
   license :cannot_represent
@@ -61,15 +61,34 @@ class Oyyama < Formula
 
 
   def caveats
-    <<~EOS
-      oyyama is interoperable with the community `ollama`: it reads the same model
-      cache (OLLAMA_MODELS, ~/.ollama/models) and serves the same OpenAI-compatible
-      API, so the two can coexist on one machine.
+    mac = on_macos do
+      <<~EOS
+        oyyama is interoperable with the community `ollama`: it reads the same model
+        cache (OLLAMA_MODELS, ~/.ollama/models) and serves the same OpenAI-compatible
+        API, so the two can coexist on one machine.
 
-      Get started:
-        oyyama pull qwen3:0.6b
-        oyyama run qwen3:0.6b
-    EOS
+        Get started:
+          oyyama pull qwen3:0.6b
+          oyyama run qwen3:0.6b
+      EOS
+    end
+    linux = on_linux do
+      <<~EOS
+        oyyama is interoperable with the community `ollama`: it reads the same model
+        cache (OLLAMA_MODELS, ~/.ollama/models) and serves the same OpenAI-compatible
+        API, so the two can coexist on one machine.
+
+        Get started:
+          oyyama pull qwen3:0.6b
+          oyyama run qwen3:0.6b
+
+        oyyama's linux binary is fully static (musl) — no glibc
+        requirement; it runs on any linux the kernel supports. No
+        interpreter, no shared libraries: the single binary is the whole
+        install, on any distribution however old.
+      EOS
+    end
+    mac || linux
   end
 
   test do
