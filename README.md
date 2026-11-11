@@ -49,12 +49,9 @@ Workspace-sync git tooling: the `land`/`sync`/`fold`/`mend`/`view`/
 symlink. Needs git >= 2.38 (the sync model uses `git merge-tree
 --write-tree`).
 
-On Linux the formula is a single prebuilt binary against glibc >= 2.35
-(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
-plain `brew install qzmfranklin/tap/yag` works; on older glibc use
-`brew install --ignore-dependencies qzmfranklin/tap/yag` — the
-formula carries no real dependencies, so Homebrew's synthetic global
-gcc/glibc deps are safe to skip.
+On Linux the binary is fully static (musl) — no glibc requirement; it
+runs on any linux the kernel supports (since 0.18.0; earlier releases
+needed glibc >= 2.35, Ubuntu 22.04 or newer).
 
 The same binary ships as .deb release assets — install directly:
 
