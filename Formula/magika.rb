@@ -9,18 +9,18 @@ class Magika < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0/magika-1.2.0-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.0/magika-1.3.0-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0/magika-1.2.0-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.2.0/magika-1.2.0-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.0/magika-1.3.0-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.0/magika-1.3.0-linux-amd64.xz",
     ),
   )
-  version "1.2.0"
+  version "1.3.0"
   sha256 on_system_conditional(
-    macos: "06142b7fa2cccd336c0af0f2c01cd70f0305ad6be5dfe561a07945fcacfcc62d",
+    macos: "42631635a7ad06b596231ecabdf8d605e5797650c11b19777ec44d50e0c36d58",
     linux: on_arch_conditional(
-      arm:   "af8e4f536d68796754a561469ccc2eba20a19a3287586a8c88c46af287ab94ae",
-      intel: "e31da08b35e16a07f7beb3f14e5e35c6a23b796d8805114fa5ffdc059c937056",
+      arm:   "36fc12a096b3659530c6f65e7f579fa142c0407235c071979904500b7104a016",
+      intel: "6b8d283dd7c8bdf4b479b30d49273e450823e595df3c4132b935a17427a3a269",
     ),
   )
   license :cannot_represent
@@ -32,6 +32,11 @@ class Magika < Formula
     # under the ASSET name — the version-suffixed magika-{version}-{os}-{arch},
     # not `magika` — so glob it and install under the canonical command name.
     bin.install Dir["magika-*"].first => "magika"
+    # A bare .xz carries no mode bits: the decompressed binary lands 0644 and
+    # every later step that execs it gets EACCES (the yag 0.18.0 linux tap
+    # install failed exactly here — the M6-found defect; macOS re-chmods inside
+    # its ad-hoc codesign stanza, linux needs it here).
+    chmod 0755, bin/"magika"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
@@ -68,17 +73,11 @@ class Magika < Formula
   def caveats
     on_linux do
       <<~EOS
-        magika ships as a single prebuilt binary per arch (the identification model
-        is embedded — no runtime downloads) and runs on ubuntu22 and newer
-        (glibc >= 2.35). On hosts with glibc < 2.39 (Ubuntu 22.04 and older),
-        Homebrew adds gcc and glibc as implicit dependencies to every formula and
-        would build them from source; magika's formula carries no real dependencies,
-        so install it there with:
-
-          brew install --ignore-dependencies magika
-
-        On glibc >= 2.39 hosts (Ubuntu 24.04+, Homebrew's own supported set),
-        plain `brew install magika` works with no extra pulls.
+        magika's linux binary is fully static (musl) — no glibc requirement; it
+        runs on any linux the kernel supports. No interpreter, no shared
+        libraries: the single binary is the whole install, on any distribution
+        however old. The formula carries no dependencies on any host, so plain
+        `brew install magika` works everywhere.
       EOS
     end
   end
