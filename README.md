@@ -26,16 +26,10 @@ instead of crashing, and `g4 mount --flavor=bypass` needs no macFUSE at
 all. The git collaboration commands live in their own product — the
 `yag` formula below.
 
-#### Ubuntu (amd64 / arm64)
-
-The same binary ships as .deb release assets — install directly:
-
-```sh
-curl -LO https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.1.9/g4-0.1.9-linux-amd64.deb
-sudo dpkg -i g4-0.1.9-linux-amd64.deb
-```
-
-(arm64: the same lines with `g4-0.1.9-linux-arm64.deb`.)
+On Linux the binary is fully static (musl) — no glibc requirement; it
+runs on any linux the kernel supports (since 0.2.0; earlier releases
+needed glibc >= 2.35, Ubuntu 22.04 or newer, and releases up to 0.1.11
+also carried .deb assets that the naming sweep retired).
 
 ### yag
 
@@ -99,12 +93,10 @@ content types from file bytes — the model is embedded, no runtime
 downloads, CPU-only. `magika <file>`, `magika -r <dir>`, `--json`,
 `--mime-type`, `--format` with the full placeholder engine.
 
-On Linux the formula is a single prebuilt binary against glibc >= 2.35
-(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
-plain `brew install qzmfranklin/tap/magika` works; on older glibc use
-`brew install --ignore-dependencies qzmfranklin/tap/magika` -- the
-formula carries no real dependencies, so Homebrew's synthetic global
-gcc/glibc deps are safe to skip.
+On Linux the binary is fully static (musl) — no glibc requirement; it
+runs on any linux the kernel supports (since 1.3.0; earlier releases
+needed glibc >= 2.35, Ubuntu 22.04 or newer). The formula carries no
+dependencies on any host, so plain `brew install` works everywhere.
 
 ### obscura
 
@@ -138,12 +130,27 @@ one self-contained binary (every codec compiled in, no runtime
 downloads). The GUI is not part of the port; `aseprite -b` is batch
 mode.
 
-On Linux the formula is a single prebuilt binary against glibc >= 2.35
-(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
-plain `brew install qzmfranklin/tap/aseprite` works; on older glibc use
-`brew install --ignore-dependencies qzmfranklin/tap/aseprite` -- the
-formula carries no real dependencies, so Homebrew's synthetic global
-gcc/glibc deps are safe to skip.
+On Linux the binary is fully static (musl) — no glibc requirement; it
+runs on any linux the kernel supports (since 0.1.0; the 0.0.x releases
+needed glibc >= 2.35, Ubuntu 22.04 or newer). The formula carries no
+dependencies on any host, so plain `brew install` works everywhere.
+
+### rea
+
+```sh
+brew install qzmfranklin/tap/rea
+```
+
+Analyze binaries through the REA evidence engine: 279 tools over one
+binary -- the clean-room disassembly/pseudocode engine, the executable
+format parsers, the analysis lanes, the MCP server and the deep CLI.
+
+On Linux the binary is fully static (musl) — no glibc requirement; it
+runs on any linux the kernel supports (since 0.2.0; the 0.1.0 release
+needed glibc >= 2.35, Ubuntu 22.04 or newer). The formula carries no
+dependencies on any host, so plain `brew install` works everywhere.
+The Windows build is a release asset (rea-windows-amd64.zip), not a
+formula -- Homebrew cannot install on Windows.
 
 ## Casks
 
