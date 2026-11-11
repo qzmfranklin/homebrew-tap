@@ -9,47 +9,37 @@ class Klash < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   url on_system_conditional(
     macos: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.2.3/klash-0.2.3-darwin-arm64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.3.0/klash-0.3.0-darwin-arm64.tar.xz",
     ),
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.2.3/klash-0.2.3-linux-amd64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.3.0/klash-0.3.0-linux-amd64.tar.xz",
     ),
   )
-  version "0.2.3"
+  version "0.3.0"
   sha256 on_system_conditional(
     macos: on_arch_conditional(
-      arm:   "c195d790486173df2d6ce04865a399708ac122c38fc2f11fda07f5928889b822",
+      arm:   "e19d23003c3ed36da77250c28be8b37aaa29eb629e5b19e8c8c6b51d967f2a42",
     ),
     linux: on_arch_conditional(
-      intel: "fc3db2d13b6e60299394f0cf003d0be067ad32ff62c7484829861d05c81a06ea",
+      intel: "3bae68485639dc6f0753065a5c59746584c895510e14287da5808fd1f79e14b1",
     ),
   )
   license :cannot_represent
 
   def install
-    # Both binaries from the tarball (plan 0007 row 4): `klash` plus the TUN
-    # helper beside it. The daemon locates the helper as a SIBLING of the
-    # running executable; bin.install lands both in the same keg bin directory,
-    # which brew links as one, so the sibling relation survives the install
-    # exactly as it ships in the tarball.
-    bin.install "klash", "klash-tun-helper"
+    bin.install "klash"
 
-    # Ad-hoc codesign on macOS, for BOTH Mach-Os (this formula sets
-    # adhoc_sign = False because the generated block signs only the primary
-    # bin). This is INTENTIONAL and load-bearing, not a workaround: the
-    # binaries are unsigned, and macOS refuses to exec an unsigned or
-    # stale-signed Mach-O — and the daemon spawns `klash-tun-helper` as a
-    # per-call subprocess, so an unsigned helper would break TUN capture on
-    # the spot. Writing the file also invalidates any prior signature, so it
-    # must be re-signed after install. chmod first: Homebrew stages files
-    # read-only, and both xattr and codesign need to WRITE to the binary.
+    # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
+    # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
+    # or stale-signed Mach-O. Writing the file also invalidates any prior
+    # signature, so it must be re-signed after install.
+    #
+    # chmod first: Homebrew stages files read-only, and both xattr and codesign
+    # need to WRITE to the binary (xattr fails with EACCES otherwise).
     if OS.mac?
-      %w[klash klash-tun-helper].each do |name|
-        target = bin/name
-        chmod 0755, target
-        system "/usr/bin/xattr", "-cr", target
-        system "/usr/bin/codesign", "--force", "--sign", "-", target
-      end
+      chmod 0755, bin/"klash"
+      system "/usr/bin/xattr", "-cr", bin/"klash"
+      system "/usr/bin/codesign", "--force", "--sign", "-", bin/"klash"
     end
 
     # `--print SHELL` writes the script to STDOUT and installs nothing; a
