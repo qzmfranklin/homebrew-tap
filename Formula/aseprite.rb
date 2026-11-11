@@ -9,18 +9,18 @@ class Aseprite < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.2/aseprite-0.0.2-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.0/aseprite-0.1.0-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.2/aseprite-0.0.2-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.0.2/aseprite-0.0.2-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.0/aseprite-0.1.0-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.0/aseprite-0.1.0-linux-amd64.xz",
     ),
   )
-  version "0.0.2"
+  version "0.1.0"
   sha256 on_system_conditional(
-    macos: "a32a07bbc08b8b9908288b100c5edd875e7227e8128831cc6401eb0962586dcf",
+    macos: "91686bda305aa0d715ef5a6adf9b18cb3d66aa676cabf480d472de117acd1fdb",
     linux: on_arch_conditional(
-      arm:   "044fb8162652be925f4dcb9abcb0b76d9e324cea9f6ce8290112e6a56dbbde93",
-      intel: "06a0cf72f7e5ddd0d986ad733916d2c42b9150123e66f39cac99857bf436a358",
+      arm:   "01e9342d7d7397d82ef6294efc3080559c7bef344558a746df808ef00d6f7f32",
+      intel: "2bec9dbc489bb955a204d1d7fc42c6d2f5b0e017a74b7f822515450b9b84dbd3",
     ),
   )
   license :cannot_represent
@@ -32,6 +32,11 @@ class Aseprite < Formula
     # under the ASSET name — the version-suffixed aseprite-{version}-{os}-{arch},
     # not `aseprite` — so glob it and install under the canonical command name.
     bin.install Dir["aseprite-*"].first => "aseprite"
+    # A bare .xz carries no mode bits: the decompressed binary lands 0644 and
+    # every later step that execs it gets EACCES (the yag 0.18.0 linux tap
+    # install failed exactly here — the M6-found defect; macOS re-chmods inside
+    # its ad-hoc codesign stanza, linux needs it here).
+    chmod 0755, bin/"aseprite"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
@@ -68,17 +73,11 @@ class Aseprite < Formula
   def caveats
     on_linux do
       <<~EOS
-        aseprite ships as a single prebuilt binary per arch (every codec and the
-        whole pixel engine are compiled in — no runtime downloads) and runs on
-        ubuntu22 and newer (glibc >= 2.35). On hosts with glibc < 2.39 (Ubuntu 22.04
-        and older), Homebrew adds gcc and glibc as implicit dependencies to every
-        formula and would build them from source; aseprite's formula carries no real
-        dependencies, so install it there with:
-
-          brew install --ignore-dependencies aseprite
-
-        On glibc >= 2.39 hosts (Ubuntu 24.04+, Homebrew's own supported set),
-        plain `brew install aseprite` works with no extra pulls.
+        aseprite's linux binary is fully static (musl) — no glibc requirement; it
+        runs on any linux the kernel supports. No interpreter, no shared
+        libraries: the single binary is the whole install, on any distribution
+        however old. The formula carries no dependencies on any host, so plain
+        `brew install aseprite` works everywhere.
       EOS
     end
   end
