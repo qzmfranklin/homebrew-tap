@@ -64,22 +64,18 @@ brew install qzmfranklin/tap/klash
 
 Clash-compatible rule-based proxy client: one unprivileged `klash
 serve` daemon owning all state, with the CLI as a frontend over a
-local socket. On macOS the same token is a cask —
-`brew install --cask qzmfranklin/tap/klash` — installing the GUI app
-with the CLI linked into `$(brew --prefix)/bin`.
+local socket. The one formula serves macOS and Linux alike — the GUI
+cask retired with the GUI (klash is a pure CLI).
 
-On Linux the formula is a single prebuilt binary against glibc >= 2.35
-(Ubuntu 22.04 or newer). On glibc >= 2.39 hosts (Ubuntu 24.04+) a
-plain `brew install qzmfranklin/tap/klash` works; on older glibc use
-`brew install --ignore-dependencies qzmfranklin/tap/klash` — the
-formula carries no real dependencies, so Homebrew's synthetic global
-gcc/glibc deps are safe to skip.
+On Linux the binary is fully static (musl) — no glibc requirement; it
+runs on any linux the kernel supports (since 0.4.0; releases up to
+0.3.0 needed glibc >= 2.35, Ubuntu 22.04 or newer). The formula carries
+no dependencies on any host, so plain `brew install` works everywhere.
 
-TUN capture is not available in the brew install: the per-call
-elevation helper does not ship beside the binary, so `klash tun`
-reports that it cannot locate klash-tun-helper. Every other verb
-(serve, status, profile, proxy, conn, traffic, ...) is fully
-functional.
+TUN capture ships in the box: the per-call elevation helper is the
+CLI's own hidden `tun-helper` subcommand (the single-binary shape
+since 0.3.0), so `klash tun` elevates through it with no sibling
+payload to install.
 
 ### magika
 
@@ -115,6 +111,24 @@ plain `brew install qzmfranklin/tap/obscura` works; on older glibc use
 `brew install --ignore-dependencies qzmfranklin/tap/obscura` -- the
 formula carries no real dependencies, so Homebrew's synthetic global
 gcc/glibc deps are safe to skip.
+
+### oyyama
+
+```sh
+brew install qzmfranklin/tap/oyyama
+```
+
+Large language model runner, interoperable with the community
+`ollama`: it reads the same model cache (OLLAMA_MODELS,
+~/.ollama/models) and serves the same OpenAI-compatible API, so the
+two can coexist on one machine. `oyyama pull`, `oyyama run`,
+`oyyama serve`, and the bench/eval/show/list verbs drive local models
+(llama-family text and multimodal).
+
+On Linux the binary is fully static (musl) — no glibc requirement; it
+runs on any linux the kernel supports (since 1.1.0; the 1.0.0 release
+needed glibc >= 2.35, Ubuntu 22.04 or newer). The formula carries no
+dependencies on any host, so plain `brew install` works everywhere.
 
 ### aseprite
 
