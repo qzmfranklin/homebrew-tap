@@ -9,13 +9,13 @@ class Courier < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   url on_system_conditional(
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/courier-0.1.14/courier-0.1.14-linux-amd64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/courier-0.1.15/courier-0.1.15-linux-amd64.tar.xz",
     ),
   )
-  version "0.1.14"
+  version "0.1.15"
   sha256 on_system_conditional(
     linux: on_arch_conditional(
-      intel: "b6d0bf09536a0910f89596bc61755732c25efb1b9cdc2edb78b35d3d1cefc1b5",
+      intel: "bccf683ae0249382a226301dcb62be1fcda8194cec33c9ce1dfcb130a927af8b",
     ),
   )
   license :cannot_represent
