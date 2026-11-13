@@ -7,21 +7,20 @@ class Klash < Formula
   homepage "https://github.com/qzmfranklin/homebrew-tap"
   # Platform choice lives in the argument, not in an on_macos block:
   # brew does not allow `url`/`sha256` inside an on_system block.
+  # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.4.0/klash-0.4.0-darwin-arm64.tar.xz",
-    ),
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.5.0/klash-0.5.0-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.4.0/klash-0.4.0-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.5.0/klash-0.5.0-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.5.0/klash-0.5.0-linux-amd64.tar.xz",
     ),
   )
-  version "0.4.0"
+  version "0.5.0"
   sha256 on_system_conditional(
-    macos: on_arch_conditional(
-      arm:   "9b2a7e3f5760aaa62514f4eecc58355320abaa1e5c8d3417667f86b7a6ae00d8",
-    ),
+    macos: "c3ac350e4dcd60f48e4bd856919833434c10c83f22159111dfc4632b190db3df",
     linux: on_arch_conditional(
-      intel: "a94fee5160bf5b79a624613759eee4e564ab095fc147205a110302ec7295e770",
+      arm:   "a3b6a0c3c3262ecebb6cbdddb9d30bf177eb79ee91b10161c314f092a883494a",
+      intel: "c043c27519d8a78d6790bc366763ec2a8db43ff3d75b9f7a971d2322bf360294",
     ),
   )
   license :cannot_represent
