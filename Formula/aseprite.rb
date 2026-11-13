@@ -9,13 +9,13 @@ class Aseprite < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.0/aseprite-0.1.0-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.1/aseprite-0.1.1-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.0/aseprite-0.1.0-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.0/aseprite-0.1.0-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.1/aseprite-0.1.1-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.1/aseprite-0.1.1-linux-amd64.xz",
     ),
   )
-  version "0.1.0"
+  version "0.1.1"
   sha256 on_system_conditional(
     macos: "91686bda305aa0d715ef5a6adf9b18cb3d66aa676cabf480d472de117acd1fdb",
     linux: on_arch_conditional(
