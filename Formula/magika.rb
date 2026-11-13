@@ -9,18 +9,18 @@ class Magika < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.0/magika-1.3.0-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.1/magika-1.3.1-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.0/magika-1.3.0-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.0/magika-1.3.0-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.1/magika-1.3.1-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.1/magika-1.3.1-linux-amd64.xz",
     ),
   )
-  version "1.3.0"
+  version "1.3.1"
   sha256 on_system_conditional(
-    macos: "42631635a7ad06b596231ecabdf8d605e5797650c11b19777ec44d50e0c36d58",
+    macos: "41beb08d47778be87e49a48b4b019f175a8823dd66e18e710c064b14f390984a",
     linux: on_arch_conditional(
-      arm:   "36fc12a096b3659530c6f65e7f579fa142c0407235c071979904500b7104a016",
-      intel: "6b8d283dd7c8bdf4b479b30d49273e450823e595df3c4132b935a17427a3a269",
+      arm:   "36d5b4a01746099aa0ef69cba1b2fbee32d6b4cb47d402ec8624a12789e1ac58",
+      intel: "e3ab9fc836ea77303d29ab4c0b2deed8d5572eaeb7383069ef24154774ae6878",
     ),
   )
   license :cannot_represent
