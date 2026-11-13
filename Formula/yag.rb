@@ -9,18 +9,18 @@ class Yag < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.18.1/yag-0.18.1-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.18.2/yag-0.18.2-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.18.1/yag-0.18.1-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.18.1/yag-0.18.1-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.18.2/yag-0.18.2-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.18.2/yag-0.18.2-linux-amd64.xz",
     ),
   )
-  version "0.18.1"
+  version "0.18.2"
   sha256 on_system_conditional(
-    macos: "e38c79883c7154ff634c23e3ee44c4c77f4e1a1e5b85f328732e5d04d3893114",
+    macos: "223d0432269a5d41b78c38e6ec111ac43060e88b11a94b8145d753e119848576",
     linux: on_arch_conditional(
-      arm:   "16a8c1004962ce9da08e0db8a727443a22349cc5543d2ae43b771a986bad8520",
-      intel: "af4b25e0f26c5f8e299101c4554f505c22c1b2618ceb3031f9087ed9ea155906",
+      arm:   "ba6e9f68c5e13dc3f360c81e9f021b4436c345b670445888448d7a270ab58cb0",
+      intel: "b5741f3b473b6a348dcf0ed66bead2ec3491d1b5cd21fdd4e9a005ce06e96b48",
     ),
   )
   license :cannot_represent
