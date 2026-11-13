@@ -9,18 +9,18 @@ class Oyyama < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.1.0/oyyama-1.1.0-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.2.0/oyyama-1.2.0-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.1.0/oyyama-1.1.0-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.1.0/oyyama-1.1.0-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.2.0/oyyama-1.2.0-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/oyyama-1.2.0/oyyama-1.2.0-linux-amd64.tar.xz",
     ),
   )
-  version "1.1.0"
+  version "1.2.0"
   sha256 on_system_conditional(
-    macos: "454b7affc5a9d10f5553996c8b6d94a79ea0f7020fb95182d6ebce1a4c39d084",
+    macos: "3888347975400d029a8f317a8c7e695cd00a9a98c8856536b1084ad5a017b43a",
     linux: on_arch_conditional(
-      arm:   "59986018bc22343e80438a0c09358f73c4ac6d3c6813ea0805bc84c0385aac7c",
-      intel: "745c7b03733dfff5d188c768e2ea48897cf1a0e1fd06a633f63854cc4145f2e4",
+      arm:   "8bccb357bfe0a4fc7b0cf8dd81c5e174c19d4eceab5456c19bec468c7ca9afb1",
+      intel: "f3e810734e936d319793ed866211a8b9a706ac3f97c9880ba2813a0c8c63cdbf",
     ),
   )
   license :cannot_represent
