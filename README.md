@@ -171,8 +171,8 @@ Ships darwin-universal and linux-amd64 (generated asset names since
 0.2.7). The linux binary is glibc-dynamic — the embedded v8 engine
 pins the glibc lane — so it needs glibc >= 2.35 (Ubuntu 22.04 or
 newer; on older hosts, `brew install --ignore-dependencies surf`).
-windows-amd64 is pending a recorded toolchain unblock, and
-linux-arm64 is pending an aarch64 engine pin.
+windows-amd64 ships since 0.2.8, and linux-arm64 is pending an
+aarch64 engine pin.
 
 ## Casks
 
