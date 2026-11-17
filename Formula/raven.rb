@@ -13,12 +13,10 @@ class Raven < Formula
   license :cannot_represent
   depends_on arch: :x86_64
 
-  # Linux-only formula: this product has NO macOS
-  # surface at all (the no_macos_cask "none"
-  # sentinel, rules_brew plan 0006 row 6.8).
-  on_macos do
-    raise "raven is a Linux-only formula; there is no macOS build of raven"
-  end
+  # Linux-only formula (rules_brew plan 0006 rows 6.4/6.8,
+  # the row-6.10 amendment): the :linux requirement owns the
+  # mac refusal -- never a readall-fatal raise.
+  depends_on :linux
 
   def install
     # The beside-binary layout (raven 0002-02 row 2.2): the loader probes every
