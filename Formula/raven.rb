@@ -7,18 +7,11 @@ class Raven < Formula
   homepage "https://github.com/qzmfranklin/homebrew-tap"
   # Platform choice lives in the argument, not in an on_macos block:
   # brew does not allow `url`/`sha256` inside an on_system block.
-  url on_system_conditional(
-    linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/raven-0.1.0/raven-0.1.0-linux-amd64.tar.xz",
-    ),
-  )
+  url "https://github.com/qzmfranklin/homebrew-tap/releases/download/raven-0.1.0/raven-0.1.0-linux-amd64.tar.xz"
   version "0.1.0"
-  sha256 on_system_conditional(
-    linux: on_arch_conditional(
-      intel: "ee57d5486146a0a6a487e8242e4607457f307fe4566369c5d7421b110ef053b2",
-    ),
-  )
+  sha256 "ee57d5486146a0a6a487e8242e4607457f307fe4566369c5d7421b110ef053b2"
   license :cannot_represent
+  depends_on arch: :x86_64
 
   # Linux-only formula: this product has NO macOS
   # surface at all (the no_macos_cask "none"
