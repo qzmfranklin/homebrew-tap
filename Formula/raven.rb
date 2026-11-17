@@ -29,13 +29,17 @@ class Raven < Formula
     # would find no components).
     prefix.install Dir["*"]
     bin.install_symlink prefix/"raven"
-    # The tar's raven member is 0644 (the pkg_files pipeline does not carry the
-    # genrule output's exec bit — the same defect surf's install hit; a tar
-    # SHOULD preserve modes, so the durable fix belongs at the packaging layer,
-    # recorded in plan 0002-02), and every step that execs it gets EACCES. The
-    # published 0.1.0 bytes are immutable, so the formula re-chmods — the surf
-    # precedent.
+    # The tar's members land 0644 (the pkg_files pipeline does not carry the
+    # genrule outputs' exec bits — the same defect surf's install hit; a tar
+    # SHOULD preserve modes, so the durable fix belongs at the packaging
+    # layer, recorded in plan 0002-02), and BOTH executables matter: raven
+    # itself (every invocation) and raven-bootstrap, which the loader fork/execl
+    # s beside the binary (native_cpu.cpp:156 — a 0644 bootstrap dies as exit
+    # 127 and every --run-process reports "native bootstrap did not stop after
+    # exec", the exact failure the first e2e run caught). The published 0.1.0
+    # bytes are immutable, so the formula re-chmods — the surf precedent.
     chmod 0755, prefix/"raven"
+    chmod 0755, prefix/"raven-bootstrap"
 
     # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
     # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
