@@ -9,18 +9,18 @@ class G4 < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.0/g4-0.2.0-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.1/g4-0.2.1-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.0/g4-0.2.0-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.0/g4-0.2.0-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.1/g4-0.2.1-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/g4-0.2.1/g4-0.2.1-linux-amd64.tar.xz",
     ),
   )
-  version "0.2.0"
+  version "0.2.1"
   sha256 on_system_conditional(
-    macos: "7c8b9900b702ea5f9fb8db7d08da7431bbcab28bb35cfcbbdb31c9559c1d49f0",
+    macos: "af11350b2efcdc3d506c4279058332c1fee8ee02b0eefad914defa2deb5db865",
     linux: on_arch_conditional(
-      arm:   "6162be2ed7d642ebae2ee96693574c80e02e6fc1f50b84972426f977eabf5a07",
-      intel: "d236013253d8d08b206571efcbf7eb1f4aa82e4ffdc4de81681ad3fcbae5ffe4",
+      arm:   "1c0ed321815ee0d94075cd5700b4b33d1b1738beca9b5fa304996249099f7a03",
+      intel: "98a08420f56cc015fb42aeee9368c1aa34657288b0871d5a353ad4f9487154c0",
     ),
   )
   license :cannot_represent
@@ -41,9 +41,13 @@ class G4 < Formula
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"g4"
     end
 
-    # `--print SHELL` writes the script to STDOUT and installs nothing; a
-    # bare `g4 complete` would edit the user's rc file, which a
-    # formula must not do.
+    # The default invocation `<bin> complete --print <shell>`
+    # writes the script to STDOUT and installs nothing; a
+    # `complete` that edits the user's rc file is a
+    # formula must-not. A CLI whose `complete` verb
+    # takes the shell as a bare POSITIONAL and always prints
+    # overrides the invocation args (the surf shape, plan
+    # 0009) and rides the same stanza.
     #
     # generate_completions_from_executable appends the shell name as the
     # final argument and writes each script where brew expects it, so it
