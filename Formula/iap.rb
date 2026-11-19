@@ -9,18 +9,18 @@ class Iap < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.25.0/iap-5.25.0-darwin-universal.tar.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.25.1/iap-5.25.1-darwin-universal.tar.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.25.0/iap-5.25.0-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.25.0/iap-5.25.0-linux-amd64.tar.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.25.1/iap-5.25.1-linux-arm64.tar.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/iap-5.25.1/iap-5.25.1-linux-amd64.tar.xz",
     ),
   )
-  version "5.25.0"
+  version "5.25.1"
   sha256 on_system_conditional(
-    macos: "dad4b8c14b00c55c59c0a2de8854988a83a8512d82e1e0796a95830604716b60",
+    macos: "a8587234b4acea47d0820d57b745730fe9fce96a38847bec2dda58682aa6731b",
     linux: on_arch_conditional(
-      arm:   "1afef2150b814693442e8275e6e4075a15f829d8ef0befb898d8b15e3857670b",
-      intel: "6728be41417c57de8b03685f5c84eb84cf12ffa56c075f2588f7f756ffcc1767",
+      arm:   "75f1562eb1943292c9360bc275e4c9b94d0cd125c7a5d6689981295ee676dc48",
+      intel: "f4b2000fa2aec8809a37739585bebeb2f74dab2e3a00301a62e6fbcc9514eea9",
     ),
   )
   license :cannot_represent
@@ -58,9 +58,13 @@ class Iap < Formula
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"iap"
     end
 
-    # `--print SHELL` writes the script to STDOUT and installs nothing; a
-    # bare `iap complete` would edit the user's rc file, which a
-    # formula must not do.
+    # The default invocation `<bin> complete --print <shell>`
+    # writes the script to STDOUT and installs nothing; a
+    # `complete` that edits the user's rc file is a
+    # formula must-not. A CLI whose `complete` verb
+    # takes the shell as a bare POSITIONAL and always prints
+    # overrides the invocation args (the surf shape, plan
+    # 0009) and rides the same stanza.
     #
     # generate_completions_from_executable appends the shell name as the
     # final argument and writes each script where brew expects it, so it
@@ -134,13 +138,30 @@ class Iap < Formula
 
 
   def caveats
-    <<~EOS
-      To sign in:
-        iap login
+    mac = on_macos do
+      <<~EOS
+        To sign in:
+          iap login
 
-      This install is managed by Homebrew, so upgrade it with:
-        brew update && brew upgrade iap
-    EOS
+        This install is managed by Homebrew, so upgrade it with:
+          brew update && brew upgrade iap
+      EOS
+    end
+    linux = on_linux do
+      <<~EOS
+        To sign in:
+          iap login
+
+        This install is managed by Homebrew, so upgrade it with:
+          brew update && brew upgrade iap
+
+        iap's linux binary is fully static (musl, static-PIE) — no glibc
+        requirement; it runs on any linux the kernel supports. No interpreter, no
+        shared libraries: the single binary is the whole install, on any
+        distribution however old.
+      EOS
+    end
+    mac || linux
   end
 
   test do
