@@ -9,18 +9,18 @@ class Rea < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.3.0/rea-0.3.0-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.3.1/rea-0.3.1-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.3.0/rea-0.3.0-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.3.0/rea-0.3.0-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.3.1/rea-0.3.1-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/rea-0.3.1/rea-0.3.1-linux-amd64.xz",
     ),
   )
-  version "0.3.0"
+  version "0.3.1"
   sha256 on_system_conditional(
-    macos: "a9ecd88616b298ac47bc04f3587469c159d911f17615c4ea8ca17d58fdfe558f",
+    macos: "43d71f797cac19dbca20ab5cb5621c21aae007548d239ebbbf61ff52c1c6c68d",
     linux: on_arch_conditional(
-      arm:   "c8089b3b97fe55d93741774d0cd6db2375ab9b06adc56ea0323cdb093dac0b1c",
-      intel: "dd0be24326bd738cae56fd6e49c239d6094e544ce03e1c65e07c733cf1f198bb",
+      arm:   "93f121bf090d0259772cec2e915abeb49f7041321781f2146194d2545bbddb54",
+      intel: "1166a7638ca15d67e09df06faa9d5fc4f32a66b02f432a51a77bf77346843796",
     ),
   )
   license :cannot_represent
