@@ -9,18 +9,18 @@ class Yag < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.19.0/yag-0.19.0-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.20.0/yag-0.20.0-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.19.0/yag-0.19.0-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.19.0/yag-0.19.0-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.20.0/yag-0.20.0-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/yag-0.20.0/yag-0.20.0-linux-amd64.xz",
     ),
   )
-  version "0.19.0"
+  version "0.20.0"
   sha256 on_system_conditional(
-    macos: "0b8b99819c902733fdcf5706a94aee64e21beac4d244b2d23c435e5dc3686d6c",
+    macos: "9ac7089503567bd882f766e99cc6d18ae7f21469b33971f0476bb54c86b62f61",
     linux: on_arch_conditional(
-      arm:   "0b7d865986216fe7489fe19b52ec18347bc16d405db2ada092a47ce10c38d8f3",
-      intel: "04e4e67236e568ada7455e573d64143d02b2d12018c70f40f853ad18cd8e3efc",
+      arm:   "b7b0afe5573ec755be26b3ebf1fdf37fcdff1850faafde2cc673e30655f46990",
+      intel: "2df6afc2e5a4473b6b569468cc3cf6b9c8f54758f1057321ba22d79ca40e6a0d",
     ),
   )
   license :cannot_represent
@@ -55,9 +55,13 @@ class Yag < Formula
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"yag"
     end
 
-    # `--print SHELL` writes the script to STDOUT and installs nothing; a
-    # bare `yag complete` would edit the user's rc file, which a
-    # formula must not do.
+    # The default invocation `<bin> complete --print <shell>`
+    # writes the script to STDOUT and installs nothing; a
+    # `complete` that edits the user's rc file is a
+    # formula must-not. A CLI whose `complete` verb
+    # takes the shell as a bare POSITIONAL and always prints
+    # overrides the invocation args (the surf shape, plan
+    # 0009) and rides the same stanza.
     #
     # generate_completions_from_executable appends the shell name as the
     # final argument and writes each script where brew expects it, so it
