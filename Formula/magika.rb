@@ -9,18 +9,18 @@ class Magika < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.1/magika-1.3.1-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.2/magika-1.3.2-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.1/magika-1.3.1-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.1/magika-1.3.1-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.2/magika-1.3.2-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/magika-1.3.2/magika-1.3.2-linux-amd64.xz",
     ),
   )
-  version "1.3.1"
+  version "1.3.2"
   sha256 on_system_conditional(
-    macos: "41beb08d47778be87e49a48b4b019f175a8823dd66e18e710c064b14f390984a",
+    macos: "5cfe05b54ccc4d2855b83430bc80b2a154027bb4c796dadcfa5b53228929f21e",
     linux: on_arch_conditional(
-      arm:   "36d5b4a01746099aa0ef69cba1b2fbee32d6b4cb47d402ec8624a12789e1ac58",
-      intel: "e3ab9fc836ea77303d29ab4c0b2deed8d5572eaeb7383069ef24154774ae6878",
+      arm:   "797c590a3f7bfb8424712673957851cb855f5b83d5245f192a76082654b0c1b8",
+      intel: "2fba1cf976686c845392f8354cac8d23f3ffd78d504a1505aff3d599f7371c2e",
     ),
   )
   license :cannot_represent
@@ -32,24 +32,43 @@ class Magika < Formula
     # under the ASSET name — the version-suffixed magika-{version}-{os}-{arch},
     # not `magika` — so glob it and install under the canonical command name.
     bin.install Dir["magika-*"].first => "magika"
-    # A bare .xz carries no mode bits: the decompressed binary lands 0644 and
-    # every later step that execs it gets EACCES (the yag 0.18.0 linux tap
-    # install failed exactly here — the M6-found defect; macOS re-chmods inside
-    # its ad-hoc codesign stanza, linux needs it here).
+
+    # chmod first, UNCONDITIONALLY: a bare .xz carries no mode bits, so the
+    # decompressed binary lands 0644 and every later step that execs it gets
+    # EACCES on linux (the yag 0.18.0 linux tap install failed exactly here —
+    # the M6-found defect; the tar-form products never saw it). Homebrew also
+    # stages files read-only, and both xattr and codesign need to WRITE to the
+    # binary (xattr fails with EACCES otherwise).
     chmod 0755, bin/"magika"
 
-    # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
-    # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
-    # or stale-signed Mach-O. Writing the file also invalidates any prior
-    # signature, so it must be re-signed after install.
-    #
-    # chmod first: Homebrew stages files read-only, and both xattr and codesign
-    # need to WRITE to the binary (xattr fails with EACCES otherwise).
+    # Ad-hoc codesign on macOS. This formula sets adhoc_sign = False and owns
+    # the block HERE (the rea/klash precedent) because the completion stanza
+    # below EXECUTES the binary: the renderer splices this snippet BEFORE its
+    # own generated codesign lines, and a cross-built arm64 Mach-O is unsigned
+    # until signed — macOS kills the exec, so the sign must come first. This
+    # is INTENTIONAL and load-bearing, not a workaround: the binary is
+    # unsigned, and macOS refuses to exec an unsigned or stale-signed Mach-O;
+    # writing the file also invalidates any prior signature, so it must be
+    # re-signed after install.
     if OS.mac?
-      chmod 0755, bin/"magika"
       system "/usr/bin/xattr", "-cr", bin/"magika"
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"magika"
     end
+
+    # Completion scripts installed WITH the binary (plan
+    # modules/magika/plan/0003 row 3, the operator's ruling — the rea shape,
+    # rules_native 0003-04 row 4.3, the shape-setter this module copies,
+    # never variants): magika's hidden `complete` subcommand writes the
+    # requested shell's script to STDOUT and edits nothing — a bare
+    # positional, no `--print` flag — so the macro's built-in completions
+    # attr (hardwired to the `complete --print <shell>` invocation the
+    # yag/klash/iap CLIs use) does not fit magika and the stanza lives here
+    # instead.
+    generate_completions_from_executable(
+      bin/"magika",
+      "complete",
+      shells: [:bash, :zsh, :fish],
+    )
   end
 
   def post_install
