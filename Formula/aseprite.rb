@@ -9,18 +9,18 @@ class Aseprite < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.1/aseprite-0.1.1-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.2/aseprite-0.1.2-darwin-universal.xz",
     linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.1/aseprite-0.1.1-linux-arm64.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.1/aseprite-0.1.1-linux-amd64.xz",
+      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.2/aseprite-0.1.2-linux-arm64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/aseprite-0.1.2/aseprite-0.1.2-linux-amd64.xz",
     ),
   )
-  version "0.1.1"
+  version "0.1.2"
   sha256 on_system_conditional(
-    macos: "91686bda305aa0d715ef5a6adf9b18cb3d66aa676cabf480d472de117acd1fdb",
+    macos: "798064675271776d06c471010d2d2f4d4fcb6dcbe2f8d62e3f7fe63f4f3054c0",
     linux: on_arch_conditional(
-      arm:   "01e9342d7d7397d82ef6294efc3080559c7bef344558a746df808ef00d6f7f32",
-      intel: "2bec9dbc489bb955a204d1d7fc42c6d2f5b0e017a74b7f822515450b9b84dbd3",
+      arm:   "09dcd55ee87fcd743af88298f5718a75aa8cd5295cf76e55396dd8f9be3026a3",
+      intel: "55f7aaff555d9da7154a90f488f6f3f7de5df2e795fccffa844238705f440506",
     ),
   )
   license :cannot_represent
@@ -38,18 +38,36 @@ class Aseprite < Formula
     # its ad-hoc codesign stanza, linux needs it here).
     chmod 0755, bin/"aseprite"
 
-    # Ad-hoc codesign on macOS. This is INTENTIONAL and load-bearing, not a
-    # workaround: the binary is unsigned, and macOS refuses to exec an unsigned
-    # or stale-signed Mach-O. Writing the file also invalidates any prior
-    # signature, so it must be re-signed after install.
-    #
-    # chmod first: Homebrew stages files read-only, and both xattr and codesign
-    # need to WRITE to the binary (xattr fails with EACCES otherwise).
+    # Ad-hoc codesign on macOS. This formula sets adhoc_sign = False and owns
+    # the block HERE (the rea precedent, plan modules/aseprite/plan/0006 row 2)
+    # because the completion stanza below EXECUTES the binary: the renderer
+    # splices this snippet BEFORE its own generated codesign lines, and a
+    # cross-built arm64 Mach-O is unsigned until signed — macOS kills the
+    # exec, so the sign must come first. This is INTENTIONAL and
+    # load-bearing, not a workaround: the binary is unsigned, and macOS
+    # refuses to exec an unsigned or stale-signed Mach-O; writing the file
+    # also invalidates any prior signature, so it must be re-signed after
+    # install. (Until the completion stanza landed, the macro's default
+    # adhoc_sign = True generated exactly this block AFTER the install body —
+    # the same bytes, moved in front, is the only change.)
     if OS.mac?
-      chmod 0755, bin/"aseprite"
       system "/usr/bin/xattr", "-cr", bin/"aseprite"
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"aseprite"
     end
+
+    # Completion scripts installed WITH the binary (plan
+    # modules/aseprite/plan/0006 row 2, the rea shape — rules_native
+    # 0003-04 row 4.3, the operator's ruling): aseprite's hidden
+    # `complete` subcommand writes the requested shell's script to STDOUT
+    # and edits nothing — a bare positional, no `--print` flag — so the
+    # macro's built-in completions attr (hardwired to the
+    # `complete --print <shell>` invocation the yag/klash/iap CLIs use)
+    # does not fit aseprite and the stanza lives here instead.
+    generate_completions_from_executable(
+      bin/"aseprite",
+      "complete",
+      shells: [:bash, :zsh, :fish],
+    )
   end
 
   def post_install
@@ -84,9 +102,17 @@ class Aseprite < Formula
 
   test do
     # The usage line survives argument changes; the version assert pins the
-    # binary's self-report (the facade's version() — the module's 0.0.1, one
-    # source of truth across crates).
+    # binary's self-report — the facade's version() (impl/lib.rs), NOT the
+    # formula's `version` stanza (publish/version.bzl). Measured 2026-11-14
+    # on the built binary (`bazel run //aseprite -- --version` → `aseprite
+    # 0.1.0`): the 0.1.1 windows-amd64 cut (plan 0007 row 5, an ASSET-SET
+    # addition, "no CLI change") bumped version.bzl but NOT the facade, so
+    # the released 0.1.1 binary still prints 0.1.0 — the assert says what
+    # the binary PRINTS, never what the formula's version stanza says. The
+    # stale `0.0.1` here predated the 0.0.2/0.1.0/0.1.1 cuts entirely. The
+    # 0.1.2 cut (plan 0006 row 2, the completion surface) re-syncs the
+    # facade with the tap version — bump this assert with it.
     assert_match(/Usage: aseprite/, shell_output("#{bin}/aseprite --help"))
-    assert_match(/^aseprite 0\.0\.1$/, shell_output("#{bin}/aseprite --version"))
+    assert_match(/^aseprite 0\.1\.0$/, shell_output("#{bin}/aseprite --version"))
   end
 end
