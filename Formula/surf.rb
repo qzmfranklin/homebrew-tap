@@ -8,22 +8,45 @@ class Surf < Formula
   # Platform choice lives in the argument, not in an on_macos block:
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
+  #
+  # HAND-REPAIR (macdisk 0001-14 row 14.7, the tap's readall defect): the linux
+  # leg is amd64-only, so it is a PLAIN string here, NOT an
+  # `on_arch_conditional(intel: ...)` with the `arm:` key missing. Rule: a
+  # formula must yield a non-nil url/sha256 for EVERY os x arch tier the `brew
+  # tap` validation (Readall) simulates; on the simulated `arm64_linux` tier the
+  # old `linux: on_arch_conditional(intel: ...)` evaluated to nil and `url nil`
+  # died as `undefined method 'downcase' for nil` — one such formula rejects the
+  # WHOLE tap ("invalid syntax in tap!"). The arch gate is the
+  # `on_linux { depends_on arch: :x86_64 }` block below: arm64 linux is refused
+  # at install ("The x86_64 architecture is required for this software."), never
+  # handed an amd64 binary, and macOS keeps the universal artifact.
+  #
+  # NOTE FOR THE NEXT REGENERATION: rules_brew plan 0006 rows 6.9/6.10 fixed
+  # this class only for the SINGLE-PLATFORM (one-OS) recipes; a mixed-OS recipe
+  # with a single arch under one OS (this formula) still renders the nil-able
+  # `on_system_conditional` + incomplete `on_arch_conditional` shape — see
+  # `render.py` `_stanza`/`_os_value`. The next surf release would overwrite
+  # this hand repair with the nil-able form and re-break the tap until that
+  # renderer case is fixed (owed; recorded in macdisk 0001-14 row 14.7).
   url on_system_conditional(
     macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-0.2.11/surf-0.2.11-darwin-universal.xz",
-    linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-0.2.11/surf-0.2.11-linux-amd64.xz",
-    ),
+    linux: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-0.2.11/surf-0.2.11-linux-amd64.xz",
   )
   version "0.2.11"
   sha256 on_system_conditional(
     macos: "df5f3500147ecc3bea7fa4e87659fd56943089d3462806451848350a49be0024",
-    linux: on_arch_conditional(
-      intel: "dd64fe48df72b8656471156351df86935ea583391d6acb2dd1e8774c1fe8ecda",
-    ),
+    linux: "dd64fe48df72b8656471156351df86935ea583391d6acb2dd1e8774c1fe8ecda",
   )
   license :cannot_represent
 
   depends_on "xz"
+
+  # amd64-only linux leg (see the HAND-REPAIR note above). Declared inside
+  # `on_linux` so the requirement gates linux only — the macOS artifact is
+  # universal and must not carry an x86_64 arch requirement.
+  on_linux do
+    depends_on arch: :x86_64
+  end
 
   def install
     # The asset is the BINARY ITSELF, xz'd by brew_artifact (the single-file

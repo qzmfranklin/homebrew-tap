@@ -211,6 +211,31 @@ available, and one `sudo ftop grant` extends the process list to every user
 (the setuid helper lives outside the bundle, so updates never change what
 runs as root).
 
+### macdisk
+
+```sh
+brew install --cask qzmfranklin/tap/macdisk
+```
+
+Unpacks the Finder's "System Data" storage bucket: a scan of about 180
+items in 19 categories (Time Machine snapshots, simulators, Xcode, dev
+tools, AI models, Docker, VMs, Trash, iOS backups, ...) with per-item
+delete/shrink actions and safety badges. The 0.1.0 cask ships the
+menu-bar app (Apple Silicon, macOS 26/Tahoe or newer); MacDisk is the
+first-party rewrite of `Jarvis322/macos-sysdata`, redistributed under
+written permission from the upstream author (the upstream license is
+proprietary).
+
+On first launch grant Full Disk Access in System Settings -> Privacy &
+Security -> Full Disk Access, then relaunch: without that grant the scan
+lists only about a dozen places instead of the ~180 in the System Data
+bucket.
+
+The app is ad-hoc signed, not Developer ID signed and not notarized. The
+cask clears `com.apple.quarantine` in its postflight, so `brew install`
+works and the app launches; a direct download of the release tarball does
+not get that step and Gatekeeper blocks it.
+
 ### vype
 
 ```sh
