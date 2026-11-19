@@ -13,9 +13,10 @@ brew install qzmfranklin/tap/iap
 Identity-aware proxy CLI: dev pods, SSH, git, and model access.
 
 Ships all four platforms: darwin-universal plus linux-amd64 and
-linux-arm64 via the formula (both static musl — no glibc requirement,
-they run on any linux the kernel supports), and a windows-amd64 .zip
-release asset on the same tag (Homebrew cannot install on Windows).
+linux-arm64 via the formula (both static musl since 5.25.1 — earlier
+releases were glibc-dynamic; no glibc requirement, they run on any linux
+the kernel supports), and a windows-amd64 .zip release asset on the same
+tag (Homebrew cannot install on Windows).
 
 ### g4
 
