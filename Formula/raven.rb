@@ -7,9 +7,9 @@ class Raven < Formula
   homepage "https://github.com/qzmfranklin/homebrew-tap"
   # Platform choice lives in the argument, not in an on_macos block:
   # brew does not allow `url`/`sha256` inside an on_system block.
-  url "https://github.com/qzmfranklin/homebrew-tap/releases/download/raven-0.1.0/raven-0.1.0-linux-amd64.tar.xz"
-  version "0.1.0"
-  sha256 "ee57d5486146a0a6a487e8242e4607457f307fe4566369c5d7421b110ef053b2"
+  url "https://github.com/qzmfranklin/homebrew-tap/releases/download/raven-0.1.1/raven-0.1.1-linux-amd64.tar.xz"
+  version "0.1.1"
+  sha256 "ed0e95d5e6123a095d7075a9c00b6adaa18cec2e2ff9f3017992ecc9a0ae96a8"
   license :cannot_represent
   depends_on arch: :x86_64
 
