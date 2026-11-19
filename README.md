@@ -220,16 +220,18 @@ brew install --cask qzmfranklin/tap/macdisk
 Unpacks the Finder's "System Data" storage bucket: a scan of about 180
 items in 19 categories (Time Machine snapshots, simulators, Xcode, dev
 tools, AI models, Docker, VMs, Trash, iOS backups, ...) with per-item
-delete/shrink actions and safety badges. The 0.1.0 cask ships the
-menu-bar app (Apple Silicon, macOS 26/Tahoe or newer); MacDisk is the
-first-party rewrite of `Jarvis322/macos-sysdata`, redistributed under
-written permission from the upstream author (the upstream license is
-proprietary).
+delete/shrink actions and safety badges. MacDisk is a proper app (Apple
+Silicon, macOS 26/Tahoe or newer): it installs into `/Applications` with
+a Dock icon, a main window and the standard app menus, plus a menu-bar
+status item that shows the window. It is the first-party rewrite of
+`Jarvis322/macos-sysdata`, redistributed under written permission from
+the upstream author (the upstream license is proprietary).
 
 On first launch grant Full Disk Access in System Settings -> Privacy &
 Security -> Full Disk Access, then relaunch: without that grant the scan
-lists only about a dozen places instead of the ~180 in the System Data
-bucket.
+lists only the 14 fields readable without it instead of the ~180 in the
+Finder's System Data bucket — the app's own banner discloses the missing
+grant and opens that settings pane.
 
 The app is ad-hoc signed, not Developer ID signed and not notarized. The
 cask clears `com.apple.quarantine` in its postflight, so `brew install`
