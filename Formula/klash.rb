@@ -7,23 +7,21 @@ class Klash < Formula
   homepage "https://github.com/qzmfranklin/homebrew-tap"
   # Platform choice lives in the argument, not in an on_macos block:
   # brew does not allow `url`/`sha256` inside an on_system block.
-  # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
-  url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.5.0/klash-0.5.0-darwin-universal.tar.xz",
-    linux: on_arch_conditional(
-      arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.5.0/klash-0.5.0-linux-arm64.tar.xz",
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.5.0/klash-0.5.0-linux-amd64.tar.xz",
-    ),
+  url on_arch_conditional(
+    arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.13.0/klash-0.13.0-linux-arm64.tar.xz",
+    intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.13.0/klash-0.13.0-linux-amd64.tar.xz",
   )
-  version "0.5.0"
-  sha256 on_system_conditional(
-    macos: "c3ac350e4dcd60f48e4bd856919833434c10c83f22159111dfc4632b190db3df",
-    linux: on_arch_conditional(
-      arm:   "a3b6a0c3c3262ecebb6cbdddb9d30bf177eb79ee91b10161c314f092a883494a",
-      intel: "c043c27519d8a78d6790bc366763ec2a8db43ff3d75b9f7a971d2322bf360294",
-    ),
+  version "0.13.0"
+  sha256 on_arch_conditional(
+    arm:   "1ddaaef411db510b09733e6d907b3d769ca1876df5fea91cb71dd8139d90f024",
+    intel: "561bf3e71c532c45141e5302ab905ad7301fd8aa949834ded9aa4cea59058b88",
   )
   license :cannot_represent
+
+  # Linux-only formula (rules_brew plan 0006 rows 6.4/6.8,
+  # the row-6.10 amendment): the :linux requirement owns the
+  # mac refusal -- never a readall-fatal raise.
+  depends_on :linux
 
   def install
     bin.install "klash"
@@ -41,9 +39,13 @@ class Klash < Formula
       system "/usr/bin/codesign", "--force", "--sign", "-", bin/"klash"
     end
 
-    # `--print SHELL` writes the script to STDOUT and installs nothing; a
-    # bare `klash complete` would edit the user's rc file, which a
-    # formula must not do.
+    # The default invocation `<bin> complete --print <shell>`
+    # writes the script to STDOUT and installs nothing; a
+    # `complete` that edits the user's rc file is a
+    # formula must-not. A CLI whose `complete` verb
+    # takes the shell as a bare POSITIONAL and always prints
+    # overrides the invocation args (the surf shape, plan
+    # 0009) and rides the same stanza.
     #
     # generate_completions_from_executable appends the shell name as the
     # final argument and writes each script where brew expects it, so it
