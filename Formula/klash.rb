@@ -8,13 +8,13 @@ class Klash < Formula
   # Platform choice lives in the argument, not in an on_macos block:
   # brew does not allow `url`/`sha256` inside an on_system block.
   url on_arch_conditional(
-    arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.16.2/klash-0.16.2-linux-arm64.tar.xz",
-    intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.16.2/klash-0.16.2-linux-amd64.tar.xz",
+    arm:   "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.16.3/klash-0.16.3-linux-arm64.tar.xz",
+    intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/klash-0.16.3/klash-0.16.3-linux-amd64.tar.xz",
   )
-  version "0.16.2"
+  version "0.16.3"
   sha256 on_arch_conditional(
-    arm:   "00be883142bdaefcb255666bd442f5abd552b0d688df048c1bc52f0cb3193cf0",
-    intel: "c0f2cbc89352ce37b0a79239e6b4ecaf1e4d4c8b7b34c237d35158f6e24388f9",
+    arm:   "52afe5a9c247afa4c47edea348f0dc64eda512a30529877d14c57e5bbb12d309",
+    intel: "68b39a5db09d79f7e2ce38657a76058b070a880bf4c3fcb1244e4303048da7a0",
   )
   license :cannot_represent
 
