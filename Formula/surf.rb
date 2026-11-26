@@ -9,16 +9,16 @@ class Surf < Formula
   # brew does not allow `url`/`sha256` inside an on_system block.
   # macOS is one universal (arm64 + x86_64) binary, so it needs no arch split.
   url on_system_conditional(
-    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-0.2.14/surf-0.2.14-darwin-universal.xz",
+    macos: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-0.2.15/surf-0.2.15-darwin-universal.xz",
     linux: on_arch_conditional(
-      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-0.2.14/surf-0.2.14-linux-amd64.xz",
+      intel: "https://github.com/qzmfranklin/homebrew-tap/releases/download/surf-0.2.15/surf-0.2.15-linux-amd64.xz",
     ),
   )
-  version "0.2.14"
+  version "0.2.15"
   sha256 on_system_conditional(
-    macos: "fda931318169a181510103f92abda44aa0cd46d5fb9a9d959a53f680a19a76b3",
+    macos: "6a65afeafdeb0ea2e59b6513dab710da82aa323fd500b8f6834b436aa69db09d",
     linux: on_arch_conditional(
-      intel: "e65fddee4b345cc8f2203046b08ef4fb56331c05c6dff52f441b4405c488defa",
+      intel: "b4b6420d7acd8a7ce83575d96a2df9e313f328a52bc4fecd88cb3b3fbd10fe25",
     ),
   )
   license :cannot_represent
